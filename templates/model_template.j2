@@ -1,0 +1,30 @@
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+from commons.base_model import BaseModel
+from commons.base_model_manager import BaseModelManager
+
+
+class {{model_name}}Manager(BaseModelManager):
+    """
+    Model manager for {{model_name_spaces_lower_case}} model. Usually overrides some inherited methods
+    as well as defines some new ones.
+    """
+    pass
+
+
+class {{model_name}}(BaseModel):
+    """
+    Model for {{model_name_spaces_lower_case}} of users and other app.
+    """
+
+{{model_body}}
+    def __str__(self):
+        return self.{{str_property_name}}
+
+    objects = {{model_name}}Manager()
+
+    class Meta:
+        verbose_name = _('{{model_name_spaces}}')
+        verbose_name_plural = _('{{model_name_spaces}}s')
+        db_table = '{{app_name}}_{{model_file_name}}s'

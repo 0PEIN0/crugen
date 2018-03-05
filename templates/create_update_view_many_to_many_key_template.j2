@@ -1,0 +1,5 @@
+        {{model_file_name}}_uuid_list = data['{{model_file_name}}_uuids'].split(',')
+        data['{{model_file_name}}'] = []
+        for uuid_str in {{model_file_name}}_uuid_list:
+            data['{{model_file_name}}'].append({{model_name}}.objects.get_by_uuid(uuid=uuid_str))
+        del data['{{model_file_name}}_uuids']

@@ -1,0 +1,2 @@
+    def get_{{foreign_key_field}}(self, obj):
+        return {{foreign_key_model}}OutputSerializer(obj.{{foreign_key_field}}{{is_many}}).data

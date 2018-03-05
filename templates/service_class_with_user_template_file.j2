@@ -1,0 +1,16 @@
+from {{app_name}}.models import {{model_name}}
+from commons.bases import BaseService
+from users.models import User
+from commons.custom_exceptions import ObjectDoesNotExist
+
+
+class {{model_name}}Service(BaseService):
+    """
+    Service class for {{model_name}} model.
+    """
+    model = {{model_name}}
+    user_model = User
+
+    def __init__(self,
+                 user):
+        super({{model_name}}Service, self).__init__(user=user)

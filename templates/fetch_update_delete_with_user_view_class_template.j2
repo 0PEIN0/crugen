@@ -1,0 +1,77 @@
+import logging
+
+from {{app_name}}.rest_api.serializers import ({{model_name}}CreateUpdateSerializer,
+                                             {{model_name}}OutputSerializer)
+from {{app_name}}.services import {{model_name}}Service
+from rest.views import BaseRetrieveUpdateDestroyAPIView
+
+logger = logging.getLogger(__name__)
+
+
+class {{model_name}}FetchUpdateDeleteAPIView(BaseRetrieveUpdateDestroyAPIView):
+
+    serializer_class = {{model_name}}CreateUpdateSerializer
+
+    def put(self,
+            request,
+            user_uuid,
+            {{model_file_name}}_uuid,
+            *args,
+            **kwargs):
+        """
+        Api version: {{api_version}}
+
+        Updates existing {{model_name_spaces_lower_case}} that belongs to an user that is supplied in url parameter.
+
+        Url Parameter is `user_uuid` denoting user uuid and `{{model_file_name}}_uuid`
+        denoting {{model_name_spaces_lower_case}} uuid.
+        """
+        return self.bad()
+
+    def get(self,
+            request,
+            user_uuid,
+            {{model_file_name}}_uuid,
+            *args,
+            **kwargs):
+        """
+        Api version: {{api_version}}
+
+        Retrieves a single existing {{model_name_spaces_lower_case}} that belongs to an user that is supplied in url parameter.
+
+        Url Parameter is `user_uuid` denoting user uuid and `{{model_file_name}}_uuid`
+        denoting {{model_name_spaces_lower_case}} uuid.
+        """
+        user = request.user
+        {{model_file_name}} = {{model_name}}Service(user=user).get_single_with_user(
+            user_uuid=user_uuid,
+            user_item_uuid={{model_file_name}}_uuid)
+        return self.ok(data={{model_file_name}},
+                       serializer={{model_name}}OutputSerializer,
+                       request=request,
+                       is_listing=False,
+                       many=False)
+
+    def delete(self,
+               request,
+               user_uuid,
+               {{model_file_name}}_uuid,
+               *args,
+               **kwargs):
+        """
+        Api version: {{api_version}}
+
+        Deletes existing {{model_name_spaces_lower_case}} that belongs to an user that is supplied in url parameter.
+
+        Url Parameter is `user_uuid` denoting user uuid and `{{model_file_name}}_uuid`
+        denoting {{model_name_spaces_lower_case}} uuid.
+        """
+        user = request.user
+        {{model_file_name}} = {{model_name}}Service(user=user).delete_with_user(
+            user_uuid=user_uuid,
+            user_item_uuid={{model_file_name}}_uuid)
+        return self.ok(data={{model_file_name}},
+                       serializer={{model_name}}OutputSerializer,
+                       request=request,
+                       is_listing=False,
+                       many=False)

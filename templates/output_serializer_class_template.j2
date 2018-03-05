@@ -1,0 +1,18 @@
+from django.utils.translation import ugettext_lazy as _
+from commons.utils import GenericDateTimeOperations
+from rest.serializers import BaseModelSerializer
+
+from ...models import {{model_name}}
+
+
+class {{model_name}}OutputSerializer(BaseModelSerializer):
+    date_created = serializers.SerializerMethodField(){{field_declaration_list}}
+
+    def get_date_created(self, obj):
+        return GenericDateTimeOperations().date_time_to_string(
+            date_obj=obj.date_created)
+
+{{field_method_declaration_list}}
+    class Meta:
+        model = {{model_name}}
+        fields = ({{fields}})

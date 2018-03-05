@@ -1,0 +1,30 @@
+from django.contrib import admin
+
+
+class {{model_name}}Admin(admin.ModelAdmin):
+    """
+    Class for {{model_name}} model in admin panel.
+    """
+
+    list_display = ('id',
+                    'uuid',{{list_display}})
+    search_fields = ('id',
+                     'uuid',{{search_fields}})
+    readonly_fields = ('date_created',
+                       'date_updated',
+                       'uuid',
+                       'id',
+                       'created_by',
+                       'updated_by',
+                       'deleted_by',)
+
+    def save_model(self,
+                   request,
+                   obj,
+                   form,
+                   change):
+        if obj.id:
+            obj.updated_by = request.user
+        else:
+            obj.created_by = request.user
+        obj.save()

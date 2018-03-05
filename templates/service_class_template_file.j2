@@ -1,0 +1,22 @@
+from {{app_name}}.models import {{model_name}}
+from commons.bases import BaseService
+from users.models import User
+
+
+class {{model_name}}Service(BaseService):
+    """
+    Service class for {{model_name}} model.
+    """
+    model = {{model_name}}
+    user_model = User
+
+    def __init__(self,
+                 user):
+        super({{model_name}}Service, self).__init__(user=user)
+
+    def check_user_{{model_file_name}}(self,
+                                     {{model_file_name}}_uuid):
+        {{model_file_name}} = {{model_name}}.objects.get_by_uuid(uuid={{model_file_name}}_uuid)
+        if {{model_file_name}}.user.id != self.user.id:
+            raise ObjectDoesNotExist(message_code='sr_{{model_file_name}}_1')
+        return {{model_file_name}}
