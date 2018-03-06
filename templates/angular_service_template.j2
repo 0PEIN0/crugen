@@ -1,0 +1,17 @@
+import BaseAngularApiService from "./../../shared/core/base-angular-api-service";
+
+class {{model_name}}Service extends BaseAngularApiService {
+
+    constructor($state, coreFactory) {
+        super();
+        this.state = $state;
+        this.apiModuleUrl = '{{api_module_name}}/';
+        this.coreFactory = coreFactory;
+        this.{{model_name_camel_case_first_char_low}}Schema = {{{field_list}}
+        };
+    }
+}
+
+export default angular.module('services.{{model_name_camel_case_first_char_low}}', [])
+    .service('{{model_name_camel_case_first_char_low}}Service', {{model_name}}Service)
+    .name;

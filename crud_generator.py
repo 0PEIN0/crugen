@@ -133,6 +133,10 @@ class DjangoCrudGenerator(object):
                                            model_def):
         model_def['model_file_name'] = self._convert_from_camel_to_snake(
             source_string=model_def['model_name'])
+        model_def['api_module_name'] = model_def['model_file_name'].replace(
+            '_', '-')
+        model_def['model_name_camel_case_first_char_low'] = model_def['model_name'][0].lower(
+        ) + model_def['model_name'][1:]
         custom_file_configs = {
             'model_file_path': '{prefix}/{app_name}/models/{file_name}.py',
             'admin_panel_class_file_path': '{prefix}/{app_name}/admin/{file_name}.py',
@@ -729,7 +733,7 @@ class DjangoCrudGenerator(object):
         context = {
             'model_file_name': single_model_def['model_file_name'],
             'model_name': single_model_def['model_name'],
-            'model_file_name_hyphen': single_model_def['model_file_name'].replace('_', '-'),
+            'model_file_name_hyphen': single_model_def['api_module_name'],
         }
         file_content = None
         pattern_string = None
@@ -737,12 +741,12 @@ class DjangoCrudGenerator(object):
             file_content = self._process_template_file(template_file_name='app_urls_new_entry_with_user_template.j2',
                                                        context=context)
             pattern_string = 'url(r\'^user/(?P<user_uuid>[0-9a-f-]+)/{model_file_name}/$\','.format(
-                model_file_name=single_model_def['model_file_name'].replace('_', '-'))
+                model_file_name=single_model_def['api_module_name'])
         else:
             file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
                                                        context=context)
             pattern_string = 'url(r\'^{model_file_name}/$\','.format(
-                model_file_name=single_model_def['model_file_name'].replace('_', '-'))
+                model_file_name=single_model_def['api_module_name'])
         if pattern_string not in urls_file_content:
             replace_str = file_content + ']'
             urls_file_content = re.sub(
@@ -775,6 +779,19 @@ class DjangoCrudGenerator(object):
         else:
             print(
                 'INFO: error message from service is already added to `messages.py` file.')
+
+    def _prepare_angular_service_class_file_content(self,
+                                                    single_model_def):
+        # TODO: complete angular service class generation
+        field_list = ''
+        context = {
+            'model_name': single_model_def['model_name'],
+            'model_name_camel_case_first_char_low': single_model_def['model_name_camel_case_first_char_low'],
+            'api_module_name': single_model_def['api_module_name'],
+            'field_list': field_list,
+        }
+        file_content = self._process_template_file(template_file_name='angular_service_template.j2',
+                                                   context=context)
 
     def create_new_app(self,
                        single_model_def):
@@ -820,6 +837,8 @@ class DjangoCrudGenerator(object):
         self._prepare_serializer_class_files_content(
             single_model_def=model_def)
         self._prepare_view_class_files_content(single_model_def=model_def)
+        # self._prepare_angular_service_class_file_content(
+        #     single_model_def=model_def)
         print('INFO: operation completed.')
 
 
@@ -833,3 +852,4 @@ except Exception as ex:
 django_crud_generator = DjangoCrudGenerator(local_settings=LOCAL_SETTINGS)
 django_crud_generator.add_new_model(
     model_def=LOCAL_SETTINGS['CUSTOM_MODEL_DEF'])
+# TODO: do reversal of model generation from json, that is generate json from existing model.
