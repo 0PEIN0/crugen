@@ -1,0 +1,4 @@
+url(r'^user/(?P<user_uuid>[0-9a-f-]+)/{{model_file_name_hyphen}}/$',
+        views.{{model_name}}CreateListAPIView.as_view()),
+    url(r'^user/(?P<user_uuid>[0-9a-f-]+)/{{model_file_name_hyphen}}/(?P<{{model_file_name}}_uuid>[0-9a-f-]+)/$',
+        views.{{model_name}}FetchUpdateDeleteAPIView.as_view()),

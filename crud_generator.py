@@ -718,7 +718,6 @@ class DjangoCrudGenerator(object):
 
     def _update_app_urls_file(self,
                               single_model_def):
-        # TODO: generate urls where with_user is set to True
         urls_file_content = self._read_file(
             dir_path=single_model_def['app_urls_file_path'])
         context = {
@@ -726,10 +725,18 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'model_file_name_hyphen': single_model_def['model_file_name'].replace('_', '-'),
         }
-        file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
-                                                   context=context)
-        pattern_string = 'url(r\'^{model_file_name}/$\','.format(
-            model_file_name=single_model_def['model_file_name'].replace('_', '-'))
+        file_content = None
+        pattern_string = None
+        if single_model_def['with_user'] is True:
+            file_content = self._process_template_file(template_file_name='app_urls_new_entry_with_user_template.j2',
+                                                       context=context)
+            pattern_string = 'url(r\'^user/(?P<user_uuid>[0-9a-f-]+)/{model_file_name}/$\','.format(
+                model_file_name=single_model_def['model_file_name'].replace('_', '-'))
+        else:
+            file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
+                                                       context=context)
+            pattern_string = 'url(r\'^{model_file_name}/$\','.format(
+                model_file_name=single_model_def['model_file_name'].replace('_', '-'))
         if pattern_string not in urls_file_content:
             replace_str = file_content + ']'
             urls_file_content = re.sub(
