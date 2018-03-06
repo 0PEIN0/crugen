@@ -168,8 +168,8 @@ class DjangoCrudGenerator(object):
             model_def['str_property_name'] = 'id'
         if model_def.get('with_user', None) is None:
             model_def['with_user'] = False
-        if model_def.get('additional_imports', None) is None:
-            model_def['additional_imports'] = []
+        if model_def.get('predefined_model_imports', None) is None:
+            model_def['predefined_model_imports'] = []
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)
@@ -329,7 +329,7 @@ class DjangoCrudGenerator(object):
                             single_model_def):
         model_body = ''
         single_model_def['model_additional_imports'] = '\n'.join(
-            single_model_def['additional_imports'])
+            single_model_def['predefined_model_imports'])
         for key, value in single_model_def['def'].items():
             other_properties = []
             context_list = []
@@ -615,7 +615,7 @@ class DjangoCrudGenerator(object):
             'model_file_name': single_model_def['model_file_name'],
             'class_name_suffix_part_underscored': '_fetch_update_delete',
             'model_name': single_model_def['model_name'],
-            'class_name_suffix_part': 'FetchUpdateDeleteAPIView',
+            'class_name_suffix_part': 'RetrieveUpdateDestroyAPIView',
         }
         self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
                                                    context=context,

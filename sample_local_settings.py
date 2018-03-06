@@ -8,6 +8,7 @@ LOCAL_SETTINGS = {
         'model_name': 'UserMessage',
         'str_property_name': 'channel_name',
         'with_user': False,
+        'predefined_model_imports': ['from users.model_fields import CustomEmailField'],
         'def': {
             'channel_name': {
                 '__type__': 'str',
@@ -32,7 +33,7 @@ LOCAL_SETTINGS = {
             },
             'message_type': {
                 '__type__': 'choice',
-                '__choices__': 'Private,Protected,Open for everyone',
+                '__choices__': 'Private,Protected,Open for everyone,Restricted',
                 '__help_text__': 'Type of the message sent',
             },
         }
