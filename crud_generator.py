@@ -5,7 +5,7 @@ import re
 class DjangoCrudGenerator(object):
     CONFIG = {
         'SYSTEM_USER_NAME': 'ubuntu',
-        'REPO_ROOT_PATH': '/home/{user_name}/Desktop',
+        'REPO_ROOT_PATH': '/home/{user_name}/Gitrepos',
         'FIELD_TYPE_MAP': {
             'str': 'CharField',
             'txt': 'TextField',
@@ -170,6 +170,8 @@ class DjangoCrudGenerator(object):
             model_def['with_user'] = False
         if model_def.get('predefined_model_imports', None) is None:
             model_def['predefined_model_imports'] = []
+        if model_def.get('predefined_output_serializer_imports', None) is None:
+            model_def['predefined_output_serializer_imports'] = []
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)
@@ -538,6 +540,7 @@ class DjangoCrudGenerator(object):
             'field_declaration_list': field_declaration_list,
             'field_method_declaration_list': field_method_declaration_list,
             'model_name': single_model_def['model_name'],
+            'additional_imports': '\n'.join(single_model_def['predefined_output_serializer_imports']),
         }
         self._write_template_file(template_file_name='output_serializer_class_template.j2',
                                   context=context,

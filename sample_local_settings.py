@@ -1,6 +1,5 @@
 LOCAL_SETTINGS = {
     'SYSTEM_USER_NAME': 'ubuntu',
-    'REPO_ROOT_PATH': '/home/ubuntu/Desktop',
     'PROJECT_FOLDER_NAME': 'test',
     'CUSTOM_MODEL_DEF': {
         'api_version': '1.0.1',
@@ -9,6 +8,7 @@ LOCAL_SETTINGS = {
         'str_property_name': 'channel_name',
         'with_user': False,
         'predefined_model_imports': ['from users.model_fields import CustomEmailField'],
+        'predefined_output_serializer_imports': ['from users.rest_api.serializers import UserOutputSerializer'],
         'def': {
             'channel_name': {
                 '__type__': 'str',
