@@ -13,7 +13,7 @@ LOCAL_SETTINGS = {
                 '__type__': 'str',
                 '__null__': True,
                 '__help_text__': 'Chat message channel name',
-                '__extra__': ['choices=ChannelType.choices'],
+                '__extra__': ['min_length=4'],
                 'max_length': '256',
             },
             'message': {
@@ -29,6 +29,11 @@ LOCAL_SETTINGS = {
             'email': {
                 '__type__': 'CustomEmailField',
                 '__help_text__': 'Email address of the user',
+            },
+            'message_type': {
+                '__type__': 'choice',
+                '__choices__': 'Private,Protected,Open for everyone',
+                '__help_text__': 'Type of the message sent',
             },
         }
     },

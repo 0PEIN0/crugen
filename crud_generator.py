@@ -1,4 +1,3 @@
-# python3 $PEIN_FRAMEWORK_ROOT_FOLDER/Python/library/projects/crud-generator/crud_generator.py
 import os
 import re
 
@@ -13,6 +12,7 @@ class DjangoCrudGenerator(object):
             'bool': 'BooleanField',
             'float': 'DecimalField',
             'int': 'IntegerField',
+            'choice': 'IntegerField',
             'ref': 'ForeignKey',
             'many_ref': 'ManyToManyField',
             'date': 'DateField',
@@ -145,10 +145,13 @@ class DjangoCrudGenerator(object):
             'admin_init_file_path': '{prefix}/{app_name}/admin/__init__.py',
             'service_init_file_path': '{prefix}/{app_name}/services/__init__.py',
             'model_init_file_path': '{prefix}/{app_name}/models/__init__.py',
+            'constants_init_file_path': '{prefix}/{app_name}/constants/__init__.py',
             'views_init_file_path': '{prefix}/{app_name}/rest_api/views/__init__.py',
+            'app_urls_file_path': '{prefix}/{app_name}/rest_api/urls.py',
             'project_settings_file_path': '{prefix}/{project_name}/settings.py',
             'project_urls_file_path': '{prefix}/{project_name}/urls.py',
             'project_messages_file_path': '{prefix}/rest/messages.py',
+            'model_field_constant_file_path': '{prefix}/{app_name}/constants/',
         }
         for key, value in custom_file_configs.items():
             model_def[key] = value.format(
@@ -246,6 +249,7 @@ class DjangoCrudGenerator(object):
             init_file_content = ''.join(init_file_lines)
             self._write_on_file_force(dir_path=destination_file_path,
                                       file_content=init_file_content)
+        return file_content
 
     def _check_and_write_admin_export_template_file(self,
                                                     template_file_name,
@@ -272,9 +276,57 @@ class DjangoCrudGenerator(object):
             self._write_on_file_force(dir_path=destination_file_path,
                                       file_content=init_file_content)
 
-    def _prepare_model_file_content(self,
-                                    single_model_def):
+    def _generate_constant_class(self,
+                                 field_name,
+                                 choices,
+                                 single_model_def):
+        res = []
+        cn = 0
+        choice_static_field_list = ''
+        choice_list = ''
+        for item in choices:
+            item_upper = item.upper().replace(' ', '_')
+            res.append(item_upper)
+            context = {
+                'choice_name_upper': item_upper,
+                'choice_value': str(cn),
+            }
+            file_content = self._process_template_file(template_file_name='constant_class_single_static_field_template.j2',
+                                                       context=context)
+            choice_static_field_list += file_content
+            context = {
+                'choice_name_upper': item_upper,
+                'choice_name_spaces': item,
+            }
+            file_content = self._process_template_file(template_file_name='constant_class_single_choice_field_template.j2',
+                                                       context=context)
+            choice_list += file_content
+            cn += 1
+        context = {
+            'field_name_camel': self._convert_from_snake_to_camel(source_string=field_name),
+            'choice_static_field_list': choice_static_field_list,
+            'choice_list': choice_list,
+        }
+        self._write_template_file(template_file_name='constant_class_template.j2',
+                                  context=context,
+                                  destination_file_path='{prefix}{model_field_name}.py'.format(prefix=single_model_def['model_field_constant_file_path'], model_field_name=field_name))
+        context = {
+            'model_file_name': field_name,
+            'class_name_suffix_part_underscored': '',
+            'model_name': self._convert_from_snake_to_camel(source_string=field_name),
+            'class_name_suffix_part': '',
+        }
+        file_content = self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+                                                                  context=context,
+                                                                  destination_file_path=single_model_def['constants_init_file_path'])
+        single_model_def['model_additional_imports'] += file_content.replace(
+            '.', '{app_name}.constants.'.format(app_name=single_model_def['app_name']))
+        return res
+
+    def _compute_model_body(self,
+                            single_model_def):
         model_body = ''
+        single_model_def['model_additional_imports'] = ''
         for key, value in single_model_def['def'].items():
             other_properties = []
             context_list = []
@@ -290,7 +342,21 @@ class DjangoCrudGenerator(object):
             if value.get('__ref_model__', None) is not None:
                 context_list.append({
                     'property': 'to',
-                    'value': value['__ref_model__'],
+                    'value': '\'' + value['__ref_model__'] + '\'',
+                })
+            if value.get('__choices__', None) is not None:
+                choices = value['__choices__'].split(',')
+                choices = self._generate_constant_class(field_name=key,
+                                                        choices=choices,
+                                                        single_model_def=single_model_def)
+                context_list.append({
+                    'property': 'choices',
+                    'value': '{field_name_camel}.choices'.format(field_name_camel=self._convert_from_snake_to_camel(source_string=key)),
+                })
+                context_list.append({
+                    'property': 'default',
+                    'value': '{field_name_camel}.{default}'.format(field_name_camel=self._convert_from_snake_to_camel(source_string=key),
+                                                                   default=choices[0]),
                 })
             for property_name, property_value in value.items():
                 if '__' not in property_name:
@@ -323,8 +389,13 @@ class DjangoCrudGenerator(object):
             file_content = self._process_template_file(template_file_name='model_field_template.j2',
                                                        context=context)
             model_body = model_body + file_content
-        # TODO: implement choice field
-        single_model_def['model_body'] = model_body
+        return model_body
+
+    def _prepare_model_file_content(self,
+                                    single_model_def):
+        single_model_def['model_body'] = self._compute_model_body(
+            single_model_def=single_model_def)
+        additional_imports = single_model_def['model_additional_imports']
         context = {
             'app_name': single_model_def['app_name'],
             'model_name': single_model_def['model_name'],
@@ -333,6 +404,7 @@ class DjangoCrudGenerator(object):
             'model_name_spaces': single_model_def['model_name_spaces'],
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'str_property_name': single_model_def['str_property_name'],
+            'additional_imports': additional_imports,
         }
         self._write_template_file(template_file_name='model_template.j2',
                                   context=context,
@@ -481,7 +553,6 @@ class DjangoCrudGenerator(object):
 
     def _prepare_view_class_files_content(self,
                                           single_model_def):
-        # TODO: add urls for views in the new django app
         foreign_key_fields = ''
         for model_field, model_def in single_model_def['def'].items():
             template_file_name = ''
@@ -548,6 +619,7 @@ class DjangoCrudGenerator(object):
                                                    context=context,
                                                    destination_file_path=single_model_def['views_init_file_path'])
         print('INFO: checked/updated view classes for the model.')
+        self._update_app_urls_file(single_model_def=single_model_def)
 
     def _prepare_admin_panel_class_file_content(self,
                                                 single_model_def):
@@ -588,12 +660,13 @@ class DjangoCrudGenerator(object):
                                                          destination_file_path=single_model_def['admin_init_file_path'])
         print('INFO: checked/updated admin panel class for the model.')
 
-    def _update_settings_file(self,
-                              single_model_def):
+    def _update_project_settings_file(self,
+                                      single_model_def):
         file_content = self._read_file(
             dir_path=single_model_def['project_settings_file_path'])
         if 'PROJECT_APPS = [' not in file_content:
-            print('Could not add new app name in settings.py file INSTALLED_APPS list.')
+            print(
+                'FATAL: Could not add new app name in settings.py file INSTALLED_APPS list.')
         else:
             app_name = '\'' + single_model_def['app_name'] + '\','
             if app_name not in file_content:
@@ -610,11 +683,20 @@ class DjangoCrudGenerator(object):
 
     def _update_new_app_urls_file(self,
                                   single_model_def):
-        # TODO: generate the urls.py file for a new django app from a template file
-        pass
+        file_content = self._read_file(
+            dir_path=single_model_def['app_urls_file_path'])
+        if 'urlpatterns = [' in file_content:
+            print('INFO: skipping new app urls.py file creation as that already exists.')
+        else:
+            context = {}
+            self._write_template_file(template_file_name='app_urls_template.j2',
+                                      context=context,
+                                      destination_file_path=single_model_def['app_urls_file_path'])
+            print(
+                'INFO: added new app urls.py file content.')
 
-    def _update_urls_file(self,
-                          single_model_def):
+    def _update_project_urls_file(self,
+                                  single_model_def):
         urls_file_content = self._read_file(
             dir_path=single_model_def['project_urls_file_path'])
         context = {
@@ -633,6 +715,30 @@ class DjangoCrudGenerator(object):
             print('INFO: added new django app url in project `urls.py` file.')
         else:
             print('INFO: django app url is already added in project `urls.py` file.')
+
+    def _update_app_urls_file(self,
+                              single_model_def):
+        # TODO: generate urls where with_user is set to True
+        urls_file_content = self._read_file(
+            dir_path=single_model_def['app_urls_file_path'])
+        context = {
+            'model_file_name': single_model_def['model_file_name'],
+            'model_name': single_model_def['model_name'],
+            'model_file_name_hyphen': single_model_def['model_file_name'].replace('_', '-'),
+        }
+        file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
+                                                   context=context)
+        pattern_string = 'url(r\'^{model_file_name}/$\','.format(
+            model_file_name=single_model_def['model_file_name'])
+        if pattern_string not in urls_file_content:
+            replace_str = file_content + ']'
+            urls_file_content = re.sub(
+                r'(\])', r'\t{replace_str}'.format(replace_str=replace_str), urls_file_content)
+            self._write_on_file_force(dir_path=single_model_def['app_urls_file_path'],
+                                      file_content=urls_file_content)
+            print('INFO: added new model CRUD urls in django app `urls.py` file.')
+        else:
+            print('INFO: model CRUD urls already exists in django app `urls.py` file.')
 
     def _update_project_messages_file(self,
                                       single_model_def):
@@ -681,8 +787,10 @@ class DjangoCrudGenerator(object):
                                                                          sub_folder_name=second_sub_folder_name)
                     self._perform_module_operations(dir_path=child_dir_path)
                 self._create_urls_file(dir_path=dir_path)
-        self._update_settings_file(single_model_def=single_model_def)
-        self._update_urls_file(single_model_def=single_model_def)
+                self._update_new_app_urls_file(
+                    single_model_def=single_model_def)
+        self._update_project_settings_file(single_model_def=single_model_def)
+        self._update_project_urls_file(single_model_def=single_model_def)
         self._update_project_messages_file(single_model_def=single_model_def)
         print('INFO: checked for app existance and created if did not exist.')
 
