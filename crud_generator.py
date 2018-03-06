@@ -729,7 +729,7 @@ class DjangoCrudGenerator(object):
         file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
                                                    context=context)
         pattern_string = 'url(r\'^{model_file_name}/$\','.format(
-            model_file_name=single_model_def['model_file_name'])
+            model_file_name=single_model_def['model_file_name'].replace('_', '-'))
         if pattern_string not in urls_file_content:
             replace_str = file_content + ']'
             urls_file_content = re.sub(
