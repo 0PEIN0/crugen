@@ -644,6 +644,7 @@ class DjangoCrudGenerator(object):
             'app_name': single_model_def['app_name'],
             'list_display': list_display,
             'search_fields': search_fields,
+            'model_name': single_model_def['model_name'],
         }
         self._write_template_file(template_file_name='admin_panel_class_template.j2',
                                   context=context,
@@ -670,7 +671,7 @@ class DjangoCrudGenerator(object):
         else:
             app_name = '\'' + single_model_def['app_name'] + '\','
             if app_name not in file_content:
-                replace_str = '\n    ' + single_model_def['app_name']
+                replace_str = '\n    \'' + single_model_def['app_name'] + '\','
                 file_content = re.sub(
                     r'(PROJECT_APPS = \[)', r'\1{replace_str}'.format(replace_str=replace_str), file_content)
                 self._write_on_file_force(dir_path=single_model_def['project_settings_file_path'],
