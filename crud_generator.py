@@ -269,10 +269,10 @@ class DjangoCrudGenerator(object):
             for line in init_file_lines:
                 if item in line:
                     found = True
-                    write_on_file = True
                     break
             if found is False:
                 init_file_lines.append(item + '\n')
+                write_on_file = True
         if write_on_file is True:
             init_file_content = ''.join(init_file_lines)
             self._write_on_file_force(dir_path=destination_file_path,
@@ -656,7 +656,7 @@ class DjangoCrudGenerator(object):
             'class_name_suffix_part_underscored': '',
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': 'Admin',
-            'app_name': single_model_def['model_name'],
+            'app_name': single_model_def['app_name'],
         }
         self._check_and_write_admin_export_template_file(template_file_name='export_admin_file_class_template.j2',
                                                          context=context,
