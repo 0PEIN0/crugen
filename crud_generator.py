@@ -168,6 +168,8 @@ class DjangoCrudGenerator(object):
             model_def['str_property_name'] = 'id'
         if model_def.get('with_user', None) is None:
             model_def['with_user'] = False
+        if model_def.get('additional_imports', None) is None:
+            model_def['additional_imports'] = []
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)
@@ -319,14 +321,15 @@ class DjangoCrudGenerator(object):
         file_content = self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
                                                                   context=context,
                                                                   destination_file_path=single_model_def['constants_init_file_path'])
-        single_model_def['model_additional_imports'] += file_content.replace(
+        single_model_def['model_additional_imports'] += '\n' + file_content.replace(
             '.', '{app_name}.constants.'.format(app_name=single_model_def['app_name']))
         return res
 
     def _compute_model_body(self,
                             single_model_def):
         model_body = ''
-        single_model_def['model_additional_imports'] = ''
+        single_model_def['model_additional_imports'] = '\n'.join(
+            single_model_def['additional_imports'])
         for key, value in single_model_def['def'].items():
             other_properties = []
             context_list = []
@@ -395,7 +398,6 @@ class DjangoCrudGenerator(object):
                                     single_model_def):
         single_model_def['model_body'] = self._compute_model_body(
             single_model_def=single_model_def)
-        additional_imports = single_model_def['model_additional_imports']
         context = {
             'app_name': single_model_def['app_name'],
             'model_name': single_model_def['model_name'],
@@ -404,7 +406,7 @@ class DjangoCrudGenerator(object):
             'model_name_spaces': single_model_def['model_name_spaces'],
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'str_property_name': single_model_def['str_property_name'],
-            'additional_imports': additional_imports,
+            'additional_imports': single_model_def['model_additional_imports'],
         }
         self._write_template_file(template_file_name='model_template.j2',
                                   context=context,
