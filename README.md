@@ -50,7 +50,7 @@
 
 > `date_time` denotes 'DateTimeField'
 
-There is a internal mapper that replaces these config names like `str` with proper model field types. If no map entry is found for provided type, then that name is treated as custom name and directly placed as model field type. For example usage, you can look into `sample_local_settings.py` file `CustomEmailField` usage.
+There is a internal mapper that replaces these config names like `str` with proper model field types. If no map entry is found for provided type, then that name is treated as custom name and directly placed as model field type. For example usage of custom model field types, you can look into `sample_local_settings.py` file `CustomEmailField` usage.
 
 13. `__null__` denotes whether the model field is nullable or not. If its true then both `null` and `blank` property of model will be set to true. Default `__null__` value is `False`.
 14. `__help_text__` is a string that places provided help text string in the model field. Field `verbose_name` value is auto generated from field name.
