@@ -1,7 +1,7 @@
 # Django CRUD Generator
 
 ### Project run prerequisites
-1. This project is only tested in Ubuntu 16.04 so far. Any additional test on other operating systems are welcomed.
+1. This project is only tested in Ubuntu 16.04 so far. Any additional tests on other operating systems are welcomed.
 2. Uses `python3` to run the generator script.
 
 ### New Django app creation with models
