@@ -1,5 +1,6 @@
 LOCAL_SETTINGS = {
     'SYSTEM_USER_NAME': 'ubuntu',
+    'REPO_ROOT_PATH': '/home/ubuntu/Gitrepos',
     'PROJECT_FOLDER_NAME': 'test',
     'CUSTOM_MODEL_DEF': {
         'api_version': '1.0.1',
