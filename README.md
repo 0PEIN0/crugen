@@ -29,6 +29,29 @@
 10. `predefined_model_imports` contains all the additional imports that we might need for model class. If there is no such import is required, then this list will be empty. Otherwise imports lines can be added as multiple strings in list. One import line for 1 string.
 11. `def` contains all the model field definition and config. Each model field has its own definition and config.
 12. `__type__` is the type of model field. Can be one of these values: `str`, `txt`, `bool`, `float`, `int`, `choice`, `ref`, `many_ref`, `date`, `date_time`.
+
+> `str` denotes 'CharField'
+
+> `txt` denotes 'TextField'
+
+> `bool` denotes 'BooleanField'
+
+> `float` denotes 'DecimalField'
+
+> `int` denotes 'IntegerField'
+
+> `choice` denotes 'IntegerField'
+
+> `ref` denotes 'ForeignKey'
+
+> `many_ref` denotes 'ManyToManyField'
+
+> `date` denotes 'DateField'
+
+> `date_time` denotes 'DateTimeField'
+
+There is a internal mapper that replaces these config names like `str` with proper model field types. If no map entry is found for provided type, then that name is treated as custom name and directly placed as model field type. For example usage, you can look into `sample_local_settings.py` file `CustomEmailField` usage.
+
 13. `__null__` denotes whether the model field is nullable or not. If its true then both `null` and `blank` property of model will be set to true. Default `__null__` value is `False`.
 14. `__help_text__` is a string that places provided help text string in the model field. Field `verbose_name` value is auto generated from field name.
 15. `__extra__` is a list of additional model field properties. In the `sample_local_settings.py` file, you'll notice that `min_length=4` is added for `channel_name` model field in `__extra__` config. What this will do is to just place this `min_length=4` string in model field definition when generating the model class code. This list can hold any number of additional model field definitions. Default `__extra__` value is empty list.
