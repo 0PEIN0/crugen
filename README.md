@@ -15,7 +15,7 @@
 8. Add new folder in postman collection for the newly created model CRUD.
 9. Export postman collection to repository.
 
-### Sample local settings file config field description
+### Sample local settings file generator config description
 
 1. `SYSTEM_USER_NAME` denotes the OS username, probably the one other than `root` user. This value is only used in `REPO_ROOT_PATH` location string. So if you leave it blank and override `REPO_ROOT_PATH` property value, its also file as well.
 2. `REPO_ROOT_PATH` contains the disk path where repository parent path is located. For those who are using [`bash-helpers`](https://github.com/0PEIN0/bash-helpers) project, the repositories are cloned in `/home/<SYSTEM_USER_NAME>/Gitrepos` path. So that becomes the value for this field and is the default value. For others, it will be the parent directory of the location where repository was cloned.
