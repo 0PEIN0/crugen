@@ -1,7 +1,7 @@
 # Django CRUD Generator
 
 ### Overview
-Generates django models, managers, services, serializers and api views all from a simple json definition. The idea is to generate of these items just by providing a simple generator configuration and definitions so that repetitive tasks are minimized.
+Generates django models, managers, services, serializers and api views all from a simple json definition. The idea is to generate these items just by providing a simple generator configuration and definitions, so that repetitive tasks are minimized.
 
 ### Project run prerequisites
 1. This project is only tested in Ubuntu 16.04 so far. Any additional tests on other operating systems are welcomed.
