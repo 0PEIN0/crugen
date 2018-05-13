@@ -828,17 +828,25 @@ class DjangoCrudGenerator(object):
                       model_def):
         model_def = self._set_missing_definition_properties(
             model_def=model_def)
-        self.create_new_app(single_model_def=model_def)
-        self._check_and_create_file(file_path=model_def['model_file_path'])
-        self._prepare_model_file_content(single_model_def=model_def)
-        self._prepare_service_class_file_content(single_model_def=model_def)
-        self._prepare_admin_panel_class_file_content(
-            single_model_def=model_def)
-        self._prepare_serializer_class_files_content(
-            single_model_def=model_def)
-        self._prepare_view_class_files_content(single_model_def=model_def)
-        # self._prepare_angular_service_class_file_content(
-        #     single_model_def=model_def)
+        if model_def['gen_app'] is True:
+            self.create_new_app(single_model_def=model_def)
+        if model_def['gen_model'] is True:
+            self._check_and_create_file(file_path=model_def['model_file_path'])
+            self._prepare_model_file_content(single_model_def=model_def)
+        if model_def['gen_service'] is True:
+            self._prepare_service_class_file_content(
+                single_model_def=model_def)
+        if model_def['gen_admin_panel'] is True:
+            self._prepare_admin_panel_class_file_content(
+                single_model_def=model_def)
+        if model_def['gen_serializer'] is True:
+            self._prepare_serializer_class_files_content(
+                single_model_def=model_def)
+        if model_def['gen_api'] is True:
+            self._prepare_view_class_files_content(single_model_def=model_def)
+        if model_def['gen_angular'] is True:
+            self._prepare_angular_service_class_file_content(
+                single_model_def=model_def)
         print('INFO: operation completed.')
 
 
