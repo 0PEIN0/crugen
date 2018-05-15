@@ -255,7 +255,7 @@ class DjangoCrudGenerator(object):
                 found = True
                 break
         if found is False:
-            init_file_lines.append(file_content + '\n')
+            init_file_lines.append('\n' + file_content + '\n')
             init_file_content = ''.join(init_file_lines)
             self._write_on_file_force(dir_path=destination_file_path,
                                       file_content=init_file_content)
