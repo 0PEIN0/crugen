@@ -29,7 +29,8 @@ class DjangoCrudGenerator(object):
         if self.CONFIG['PROJECT_FOLDER_NAME'] is None or self.CONFIG['PROJECT_FOLDER_NAME'] == '':
             raise Exception('Project name can not be null or empty.')
         project_name = self.CONFIG['PROJECT_FOLDER_NAME']
-        self.CONFIG['CUSTOM_MODEL_DEF']['project_name'] = project_name
+        for item in self.CONFIG['CUSTOM_MODEL_DEF']:
+            item['project_name'] = project_name
         for key, value in local_settings.items():
             self.CONFIG[key] = value
         self.CONFIG['REPO_ROOT_PATH'] = self.CONFIG['REPO_ROOT_PATH'].format(
@@ -38,12 +39,13 @@ class DjangoCrudGenerator(object):
         self.PROJECT_PATH = '{prefix}/{project_name}'.format(
             prefix=self.CONFIG['REPO_ROOT_PATH'],
             project_name=self.PROJECT_NAME)
-        if self.CONFIG['CUSTOM_MODEL_DEF'].get('is_second_depth', None) is None:
-            self.CONFIG['CUSTOM_MODEL_DEF']['is_second_depth'] = False
-        if self.CONFIG['CUSTOM_MODEL_DEF']['is_second_depth'] is True:
-            self.PROJECT_PATH = '{prefix}/{project_name}'.format(
-                prefix=self.PROJECT_PATH,
-                project_name=self.PROJECT_NAME)
+        for item in self.CONFIG['CUSTOM_MODEL_DEF']:
+            if item.get('is_second_depth', None) is None:
+                item['is_second_depth'] = False
+            if item['is_second_depth'] is True:
+                self.PROJECT_PATH = '{prefix}/{project_name}'.format(
+                    prefix=self.PROJECT_PATH,
+                    project_name=self.PROJECT_NAME)
         for key, value in local_settings.items():
             self.CONFIG[key] = value
 
@@ -591,6 +593,10 @@ class DjangoCrudGenerator(object):
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'foreign_key_fields': foreign_key_fields,
             'model_file_name': single_model_def['model_file_name'],
+            'get_method_allowed': single_model_def['get_method_allowed'],
+            'post_method_allowed': single_model_def['post_method_allowed'],
+            'put_method_allowed': single_model_def['put_method_allowed'],
+            'delete_method_allowed': single_model_def['delete_method_allowed'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -614,6 +620,10 @@ class DjangoCrudGenerator(object):
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'foreign_key_fields': foreign_key_fields,
             'model_file_name': single_model_def['model_file_name'],
+            'get_method_allowed': single_model_def['get_method_allowed'],
+            'post_method_allowed': single_model_def['post_method_allowed'],
+            'put_method_allowed': single_model_def['put_method_allowed'],
+            'delete_method_allowed': single_model_def['delete_method_allowed'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -823,8 +833,8 @@ class DjangoCrudGenerator(object):
         self._update_project_messages_file(single_model_def=single_model_def)
         print('INFO: checked for app existance and created if did not exist.')
 
-    def add_new_model(self,
-                      model_def):
+    def execute(self,
+                model_def):
         model_def = self._set_missing_definition_properties(
             model_def=model_def)
         if model_def['gen_app'] is True:
@@ -848,7 +858,13 @@ class DjangoCrudGenerator(object):
         if model_def['gen_angular'] is True:
             self._prepare_angular_service_class_file_content(
                 single_model_def=model_def)
-        print('INFO: operation completed.')
+        print('INFO: single operation completed.')
+
+    def execute_list(self,
+                     model_def_list):
+        for model_def in model_def_list:
+            self.execute(model_def=model_def)
+        print('INFO: all operation completed.')
 
 
 LOCAL_SETTINGS = {}
@@ -859,6 +875,6 @@ except Exception as ex:
     pass
 
 django_crud_generator = DjangoCrudGenerator(local_settings=LOCAL_SETTINGS)
-django_crud_generator.add_new_model(
-    model_def=LOCAL_SETTINGS['CUSTOM_MODEL_DEF'])
+django_crud_generator.execute_list(
+    model_def_list=LOCAL_SETTINGS['CUSTOM_MODEL_DEF'])
 # TODO: do reversal of model generation from json, that is generate json from existing model.

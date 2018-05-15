@@ -1,5 +1,5 @@
 import logging
-
+import sys
 from commons.custom_exceptions import ObjectDoesNotExist
 from {{app_name}}.rest_api.serializers import ({{model_name}}CreateUpdateSerializer,
                                                  {{model_name}}OutputSerializer)
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class {{model_name}}CreateListAPIView(BaseListCreateAPIView):
 
     serializer_class = {{model_name}}CreateUpdateSerializer
-    get_method_allowed = []
-    post_method_allowed = []
+    listing_get_method_allowed = [{{get_method_allowed}}]
+    post_method_allowed = [{{post_method_allowed}}]
 
     def post(self,
              request,
@@ -28,6 +28,8 @@ class {{model_name}}CreateListAPIView(BaseListCreateAPIView):
         Creates a new {{model_name_spaces_lower_case}}.
         """
         user = request.user
+        self.check_group_permission(method_name=sys._getframe().f_code.co_name,
+                                    user=user)
         response, data = self.check_serializer(request=request)
         if response:
             return response{{foreign_key_fields}}
@@ -52,6 +54,8 @@ class {{model_name}}CreateListAPIView(BaseListCreateAPIView):
         Returns a list of {{model_name_spaces_lower_case}}s.
         """
         user = request.user
+        self.check_group_permission(method_name='listing_{0}'.format(sys._getframe().f_code.co_name),
+                                    user=user)
         data = self.get_queryset(
             user=user)
         return self.ok(data=data,
