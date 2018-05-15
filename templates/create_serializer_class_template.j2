@@ -1,0 +1,14 @@
+from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers
+from rest.serializers import BaseModelSerializer
+
+from ...models import {{model_name}}
+
+
+class {{model_name}}CreateSerializer(BaseModelSerializer):
+
+{{custom_fields}}
+
+    class Meta:
+        model = {{model_name}}
+        fields = ({{fields}})

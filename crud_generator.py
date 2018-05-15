@@ -17,6 +17,8 @@ class DjangoCrudGenerator(object):
             'many_ref': 'ManyToManyField',
             'date': 'DateField',
             'date_time': 'DateTimeField',
+            'image': 'ImageField',
+            'file': 'FileField',
         },
         'EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS': ['ManyToManyField', 'ForeignKey', 'DateField', 'DateTimeField'],
         'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 3,
@@ -143,6 +145,8 @@ class DjangoCrudGenerator(object):
             'model_file_path': '{prefix}/{app_name}/models/{file_name}.py',
             'admin_panel_class_file_path': '{prefix}/{app_name}/admin/{file_name}.py',
             'service_file_path': '{prefix}/{app_name}/services/{file_name}.py',
+            'create_serializer_file_path': '{prefix}/{app_name}/rest_api/serializers/{file_name}_create.py',
+            'update_serializer_file_path': '{prefix}/{app_name}/rest_api/serializers/{file_name}_update.py',
             'create_update_serializer_file_path': '{prefix}/{app_name}/rest_api/serializers/{file_name}_create_update.py',
             'output_serializer_file_path': '{prefix}/{app_name}/rest_api/serializers/{file_name}_output.py',
             'create_list_views_file_path': '{prefix}/{app_name}/rest_api/views/{file_name}_create_list.py',
@@ -486,23 +490,59 @@ class DjangoCrudGenerator(object):
             fields.append(file_content)
             cn += 1
         fields = ''.join(fields)
-        context = {
-            'fields': fields,
-            'model_name': single_model_def['model_name'],
-            'custom_fields': custom_fields,
-        }
-        self._write_template_file(template_file_name='create_update_serializer_class_template.j2',
-                                  context=context,
-                                  destination_file_path=single_model_def['create_update_serializer_file_path'])
-        context = {
-            'model_file_name': single_model_def['model_file_name'],
-            'class_name_suffix_part_underscored': '_create_update',
-            'model_name': single_model_def['model_name'],
-            'class_name_suffix_part': 'CreateUpdateSerializer',
-        }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
-                                                   context=context,
-                                                   destination_file_path=single_model_def['serializer_init_file_path'])
+        if single_model_def['is_create_update_same_serializer'] is True:
+            context = {
+                'fields': fields,
+                'model_name': single_model_def['model_name'],
+                'custom_fields': custom_fields,
+            }
+            self._write_template_file(template_file_name='create_update_serializer_class_template.j2',
+                                      context=context,
+                                      destination_file_path=single_model_def['create_update_serializer_file_path'])
+            context = {
+                'model_file_name': single_model_def['model_file_name'],
+                'class_name_suffix_part_underscored': '_create_update',
+                'model_name': single_model_def['model_name'],
+                'class_name_suffix_part': 'CreateUpdateSerializer',
+            }
+            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+                                                       context=context,
+                                                       destination_file_path=single_model_def['serializer_init_file_path'])
+        else:
+            context = {
+                'fields': fields,
+                'model_name': single_model_def['model_name'],
+                'custom_fields': custom_fields,
+            }
+            self._write_template_file(template_file_name='create_serializer_class_template.j2',
+                                      context=context,
+                                      destination_file_path=single_model_def['create_serializer_file_path'])
+            context = {
+                'model_file_name': single_model_def['model_file_name'],
+                'class_name_suffix_part_underscored': '_create',
+                'model_name': single_model_def['model_name'],
+                'class_name_suffix_part': 'CreateSerializer',
+            }
+            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+                                                       context=context,
+                                                       destination_file_path=single_model_def['serializer_init_file_path'])
+            context = {
+                'fields': fields,
+                'model_name': single_model_def['model_name'],
+                'custom_fields': custom_fields,
+            }
+            self._write_template_file(template_file_name='update_serializer_class_template.j2',
+                                      context=context,
+                                      destination_file_path=single_model_def['update_serializer_file_path'])
+            context = {
+                'model_file_name': single_model_def['model_file_name'],
+                'class_name_suffix_part_underscored': '_update',
+                'model_name': single_model_def['model_name'],
+                'class_name_suffix_part': 'UpdateSerializer',
+            }
+            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+                                                       context=context,
+                                                       destination_file_path=single_model_def['serializer_init_file_path'])
         fields = []
         field_declaration_list = []
         field_method_declaration_list = []
@@ -598,6 +638,7 @@ class DjangoCrudGenerator(object):
             'post_method_allowed': single_model_def['post_method_allowed'],
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
+            'foreign_key_to_user': single_model_def['foreign_key_to_user'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -626,6 +667,7 @@ class DjangoCrudGenerator(object):
             'post_method_allowed': single_model_def['post_method_allowed'],
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
+            'foreign_key_to_user': single_model_def['foreign_key_to_user'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
