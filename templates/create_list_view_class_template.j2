@@ -2,11 +2,11 @@ import logging
 import sys
 
 from commons.custom_exceptions import ObjectDoesNotExist
-from {{app_name}}.rest_api.serializers import ({{model_name}}CreateUpdateSerializer,
-                                                 {{model_name}}OutputSerializer)
-from {{app_name}}.services import {{model_name}}Service
 from rest.views import BaseListCreateAPIView
 from users.constants import *
+from {{app_name}}.rest_api.serializers import ({{model_name}}CreateUpdateSerializer,
+                                               {{model_name}}OutputSerializer)
+from {{app_name}}.services import {{model_name}}Service
 
 from ...models import {{model_name}}
 
