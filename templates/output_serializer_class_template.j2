@@ -15,4 +15,5 @@ class {{model_name}}OutputSerializer(BaseModelSerializer):
 {{field_method_declaration_list}}
     class Meta:
         model = {{model_name}}
-        fields = ({{fields}})
+        fields = ('uuid',
+                  {{fields}})
