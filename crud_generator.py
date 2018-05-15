@@ -628,7 +628,6 @@ class DjangoCrudGenerator(object):
                                                    context=context,
                                                    destination_file_path=single_model_def['views_init_file_path'])
         print('INFO: checked/updated view classes for the model.')
-        self._update_app_urls_file(single_model_def=single_model_def)
 
     def _prepare_admin_panel_class_file_content(self,
                                                 single_model_def):
@@ -750,7 +749,7 @@ class DjangoCrudGenerator(object):
         if pattern_string not in urls_file_content:
             replace_str = file_content + ']'
             urls_file_content = re.sub(
-                r'(\])', r'\t{replace_str}'.format(replace_str=replace_str), urls_file_content)
+                r'(\n\])', r'\t{replace_str}'.format(replace_str=replace_str), urls_file_content)
             self._write_on_file_force(dir_path=single_model_def['app_urls_file_path'],
                                       file_content=urls_file_content)
             print('INFO: added new model CRUD urls in django app `urls.py` file.')
@@ -844,6 +843,8 @@ class DjangoCrudGenerator(object):
                 single_model_def=model_def)
         if model_def['gen_api'] is True:
             self._prepare_view_class_files_content(single_model_def=model_def)
+        if model_def['gen_end_points'] is True:
+            self._update_app_urls_file(single_model_def=model_def)
         if model_def['gen_angular'] is True:
             self._prepare_angular_service_class_file_content(
                 single_model_def=model_def)

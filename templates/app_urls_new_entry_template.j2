@@ -1,4 +1,5 @@
-url(r'^{{model_file_name_hyphen}}/$',
+
+    url(r'^{{model_file_name_hyphen}}/$',
         views.{{model_name}}CreateListAPIView.as_view()),
     url(r'^{{model_file_name_hyphen}}/(?P<{{model_file_name}}_uuid>[0-9a-f-]+)/$',
         views.{{model_name}}RetrieveUpdateDestroyAPIView.as_view()),
