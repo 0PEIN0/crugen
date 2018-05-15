@@ -1,5 +1,6 @@
 import logging
 import sys
+
 from {{app_name}}.rest_api.serializers import ({{model_name}}CreateUpdateSerializer,
                                              {{model_name}}OutputSerializer)
 from {{app_name}}.services import {{model_name}}Service
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIView):
 
     serializer_class = {{model_name}}CreateUpdateSerializer
-    single_get_method_allowed = [{{get_method_allowed}}]
+    single_get_method_allowed = [{{single_get_method_allowed}}]
     put_method_allowed = [{{put_method_allowed}}]
     delete_method_allowed = [{{delete_method_allowed}}]
 
