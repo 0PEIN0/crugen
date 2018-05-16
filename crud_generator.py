@@ -194,6 +194,8 @@ class DjangoCrudGenerator(object):
         else:
             model_def['foreign_key_to_user'] = '.filter(({0}{1})'.format(
                 model_def['foreign_key_to_user'], '=user')
+        if model_def.get('api_view_user_import', None) is None:
+            model_def['api_view_user_import'] = ''
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)
@@ -638,9 +640,16 @@ class DjangoCrudGenerator(object):
         template_file_name = 'create_list_view_class_template.j2'
         if single_model_def['with_user'] is True:
             template_file_name = 'create_list_with_user_view_class_template.j2'
+        if single_model_def['is_create_update_same_serializer'] is True:
+            single_model_def['model_serializer_name'] = '{0}CreateUpdate'.format(
+                single_model_def['model_name'])
+        else:
+            single_model_def['model_serializer_name'] = '{0}Create'.format(
+                single_model_def['model_name'])
         context = {
             'app_name': single_model_def['app_name'],
             'model_name': single_model_def['model_name'],
+            'model_serializer_name': single_model_def['model_serializer_name'],
             'api_version': single_model_def['api_version'],
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'foreign_key_fields': foreign_key_fields,
@@ -651,6 +660,7 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
+            'api_view_user_import': single_model_def['api_view_user_import'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -667,9 +677,16 @@ class DjangoCrudGenerator(object):
         template_file_name = 'fetch_update_delete_view_class_template.j2'
         if single_model_def['with_user'] is True:
             template_file_name = 'fetch_update_delete_with_user_view_class_template.j2'
+        if single_model_def['is_create_update_same_serializer'] is True:
+            single_model_def['model_serializer_name'] = '{0}CreateUpdate'.format(
+                single_model_def['model_name'])
+        else:
+            single_model_def['model_serializer_name'] = '{0}Update'.format(
+                single_model_def['model_name'])
         context = {
             'app_name': single_model_def['app_name'],
             'model_name': single_model_def['model_name'],
+            'model_serializer_name': single_model_def['model_serializer_name'],
             'api_version': single_model_def['api_version'],
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
             'foreign_key_fields': foreign_key_fields,
@@ -680,6 +697,7 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
+            'api_view_user_import': single_model_def['api_view_user_import'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
