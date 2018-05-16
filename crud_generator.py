@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -68,6 +69,12 @@ class DjangoCrudGenerator(object):
             raise Exception('FATAL ERROR: error occured during reading a file. File path: {dir_path}'.format(
                 dir_path=dir_path))
         return file_content
+
+    def _read_json_file(self,
+                        dir_path):
+        file_content = self._read_file(dir_path=dir_path)
+        json_obj = json.loads(file_content)
+        return json_obj
 
     def _read_file_lines(self,
                          dir_path):
@@ -182,6 +189,11 @@ class DjangoCrudGenerator(object):
             model_def['predefined_model_imports'] = []
         if model_def.get('predefined_output_serializer_imports', None) is None:
             model_def['predefined_output_serializer_imports'] = []
+        if model_def.get('foreign_key_to_user', None) is None:
+            model_def['foreign_key_to_user'] = '.all()'
+        else:
+            model_def['foreign_key_to_user'] = '.filter(({0}{1})'.format(
+                model_def['foreign_key_to_user'], '=user')
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)

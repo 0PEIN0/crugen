@@ -43,7 +43,7 @@ class {{model_name}}CreateListAPIView(BaseListCreateAPIView):
 
     def get_queryset(self,
                      user):
-        return {{model_name}}.objects.filter({{foreign_key_to_user}}=user).order_by('-date_created')
+        return {{model_name}}.objects{{foreign_key_to_user}}.order_by('-date_created')
 
     def get(self,
             request,

@@ -1,0 +1,277 @@
+    {
+      "name": "user login code",
+      "description": null,
+      "item": [
+        {
+          "name": "user login create single",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "76e673a1-12cb-49c4-beaf-b55d6ea35cde",
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "if(jsonData.results!= null){",
+                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "}",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "089d93c5-bab2-4352-82d6-525107a34d0b",
+                "type": "text/javascript",
+                "exec": [
+                  "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login_code_type\":\"0\",\n  \"login_code\":\"{{login_code}}\",\n  \"user_uuid\":\"{{user_uuid}}\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/api/users/user-login-code/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "user-login-code",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user login listing get",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "2789933e-83dd-44f5-ac91-1c912996e019",
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "if(jsonData.results!= null){",
+                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results[0].uuid);",
+                  "}",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "5d8d3259-7b83-4d93-ab13-c1f9f057db84",
+                "type": "text/javascript",
+                "exec": [
+                  "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{host}}/api/users/user-login-code/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "user-login-code",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user login single update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "b941336f-2ff1-45fc-a5df-149777bf5719",
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "if(jsonData.results!= null){",
+                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "}",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login_code_type\":\"0\"\n}"
+            },
+            "url": {
+              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "user-login-code",
+                "{{user_login_code_uuid}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user login single get",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "164a2a55-9b6f-4d7e-a1e9-c0a6801b8853",
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "if(jsonData.results!= null){",
+                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "}",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "user-login-code",
+                "{{user_login_code_uuid}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user login single delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "user-login-code",
+                "{{user_login_code_uuid}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "e9f3ebde-0f22-45da-91f1-2fab4e74ebd5",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "f9163e91-c3b7-436e-a5a6-d5fb9c8aeab4",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    }
