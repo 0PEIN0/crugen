@@ -169,6 +169,7 @@ class DjangoCrudGenerator(object):
             'project_urls_file_path': '{prefix}/{project_name}/urls.py',
             'project_messages_file_path': '{prefix}/rest/messages.py',
             'model_field_constant_file_path': '{prefix}/{app_name}/constants/',
+            'app_utils_file': '{prefix}/{app_name}/utils.py',
         }
         for key, value in custom_file_configs.items():
             model_def[key] = value.format(
