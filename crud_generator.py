@@ -948,6 +948,7 @@ LOCAL_SETTINGS = {}
 try:
     from local_settings import LOCAL_SETTINGS
 except Exception as ex:
+    print('ERROR: error in loading local settings file. Details:', ex)
     pass
 
 django_crud_generator = DjangoCrudGenerator(local_settings=LOCAL_SETTINGS)
