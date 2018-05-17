@@ -39,6 +39,7 @@ class DjangoCrudGenerator(object):
         self.CONFIG['REPO_ROOT_PATH'] = self.CONFIG['REPO_ROOT_PATH'].format(
             user_name=self.CONFIG['SYSTEM_USER_NAME'])
         self.PROJECT_NAME = project_name
+        self.REPO_ROOT_PATH = self.CONFIG['REPO_ROOT_PATH']
         self.PROJECT_PATH = '{prefix}/{project_name}'.format(
             prefix=self.CONFIG['REPO_ROOT_PATH'],
             project_name=self.PROJECT_NAME)
@@ -148,6 +149,9 @@ class DjangoCrudGenerator(object):
             '_', '-')
         model_def['model_name_camel_case_first_char_low'] = model_def['model_name'][0].lower(
         ) + model_def['model_name'][1:]
+        model_def['model_name_space_seperated'] = ' '.join(self._camel_case_word_split(
+            source_string=model_def['model_name']))
+        model_def['model_name_lowercase'] = model_def['model_name'].lower()
         custom_file_configs = {
             'model_file_path': '{prefix}/{app_name}/models/{file_name}.py',
             'admin_panel_class_file_path': '{prefix}/{app_name}/admin/{file_name}.py',
@@ -170,9 +174,11 @@ class DjangoCrudGenerator(object):
             'project_messages_file_path': '{prefix}/rest/messages.py',
             'model_field_constant_file_path': '{prefix}/{app_name}/constants/',
             'app_utils_file': '{prefix}/{app_name}/utils.py',
+            'project_initial_data_load_path': '{repo_root_path}/scripts/python/initial_data_load.py',
         }
         for key, value in custom_file_configs.items():
             model_def[key] = value.format(
+                repo_root_path=self.REPO_ROOT_PATH,
                 prefix=self.PROJECT_PATH,
                 app_name=model_def['app_name'],
                 project_name=model_def['project_name'],
@@ -197,6 +203,20 @@ class DjangoCrudGenerator(object):
                 model_def['foreign_key_to_user'], '=user')
         if model_def.get('api_view_user_import', None) is None:
             model_def['api_view_user_import'] = ''
+        for item in ['gen_app',
+                     'gen_model',
+                     'gen_service',
+                     'gen_api',
+                     'gen_end_points',
+                     'gen_admin_panel',
+                     'gen_serializer',
+                     'gen_group_permissions',
+                     'gen_angular', ]:
+            try:
+                if model_def[item] is None:
+                    model_def[item] = False
+            except KeyError as ex:
+                model_def[item] = False
         model_field_name_list = []
         for key, value in model_def['def'].items():
             model_field_name_list.append(key)
@@ -864,6 +884,24 @@ class DjangoCrudGenerator(object):
             print(
                 'INFO: error message from service is already added to `messages.py` file.')
 
+    def _update_initial_data_load_group_permission(self,
+                                                   single_model_def):
+        context = {
+            'model_name_space_seperated': single_model_def['model_name_space_seperated'],
+            'model_name_lowercase': single_model_def['model_name_lowercase'],
+        }
+        replace_str = self._process_template_file(template_file_name='new_model_group_permission_entry_template.j2',
+                                                  context=context)
+        file_content = self._read_file(
+            dir_path=single_model_def['project_initial_data_load_path'])
+        pattern_string = '{0}\''.format(
+            single_model_def['model_name_space_seperated'])
+        if pattern_string not in file_content:
+            file_content = re.sub(
+                r'(\]\)  \# update permission end)', r'\t{replace_str}'.format(replace_str=replace_str), file_content)
+            self._write_on_file_force(dir_path=single_model_def['project_initial_data_load_path'],
+                                      file_content=file_content)
+
     def _prepare_angular_service_class_file_content(self,
                                                     single_model_def):
         # TODO: complete angular service class generation
@@ -931,6 +969,9 @@ class DjangoCrudGenerator(object):
             self._prepare_view_class_files_content(single_model_def=model_def)
         if model_def['gen_end_points'] is True:
             self._update_app_urls_file(single_model_def=model_def)
+        if model_def['gen_group_permissions'] is True:
+            self._update_initial_data_load_group_permission(
+                single_model_def=model_def)
         if model_def['gen_angular'] is True:
             self._prepare_angular_service_class_file_content(
                 single_model_def=model_def)
