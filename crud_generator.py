@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import uuid
 
 
 class DjangoCrudGenerator(object):
@@ -151,6 +152,9 @@ class DjangoCrudGenerator(object):
         ) + model_def['model_name'][1:]
         model_def['model_name_space_seperated'] = ' '.join(self._camel_case_word_split(
             source_string=model_def['model_name']))
+        model_def['model_name_hyphen_seperated'] = model_def['model_name_space_seperated'].replace(
+            ' ', '-').lower()
+        model_def['model_name_space_seperated_lower_case'] = model_def['model_name_space_seperated'].lower()
         model_def['model_name_lowercase'] = model_def['model_name'].lower()
         custom_file_configs = {
             'model_file_path': '{prefix}/{app_name}/models/{file_name}.py',
@@ -211,7 +215,8 @@ class DjangoCrudGenerator(object):
                      'gen_admin_panel',
                      'gen_serializer',
                      'gen_group_permissions',
-                     'gen_angular', ]:
+                     'gen_angular',
+                     'gen_postman', ]:
             try:
                 if model_def[item] is None:
                     model_def[item] = False
@@ -902,6 +907,27 @@ class DjangoCrudGenerator(object):
             self._write_on_file_force(dir_path=single_model_def['project_initial_data_load_path'],
                                       file_content=file_content)
 
+    def _update_postman_collection(self,
+                                   single_model_def):
+        # TODO: complete postman collection generation
+        context = {
+            'model_file_name': single_model_def['model_file_name'],
+            'model_name_hyphen_seperated': single_model_def['model_name_hyphen_seperated'],
+            'app_name': single_model_def['app_name'],
+            'model_name_space_seperated_lower_case': single_model_def['model_name_space_seperated_lower_case'],
+            'uuid1': str(uuid.uuid4()),
+            'uuid2': str(uuid.uuid4()),
+            'uuid3': str(uuid.uuid4()),
+            'uuid4': str(uuid.uuid4()),
+            'uuid5': str(uuid.uuid4()),
+            'uuid6': str(uuid.uuid4()),
+            'uuid7': str(uuid.uuid4()),
+            'uuid8': str(uuid.uuid4()),
+        }
+        file_content = self._process_template_file(template_file_name='postman_collection_template.j2',
+                                                   context=context)
+        print(77, file_content)
+
     def _prepare_angular_service_class_file_content(self,
                                                     single_model_def):
         # TODO: complete angular service class generation
@@ -974,6 +1000,9 @@ class DjangoCrudGenerator(object):
                 single_model_def=model_def)
         if model_def['gen_angular'] is True:
             self._prepare_angular_service_class_file_content(
+                single_model_def=model_def)
+        if model_def['gen_postman'] is True:
+            self._update_postman_collection(
                 single_model_def=model_def)
         print('INFO: single operation completed.')
 

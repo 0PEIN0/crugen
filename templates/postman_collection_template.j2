@@ -1,19 +1,19 @@
     {
-      "name": "user login code",
+      "name": "{{model_name_space_seperated_lower_case}}",
       "description": null,
       "item": [
         {
-          "name": "user login create single",
+          "name": "{{model_name_space_seperated_lower_case}} create single",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "76e673a1-12cb-49c4-beaf-b55d6ea35cde",
+                "id": "{{uuid1}}",
                 "type": "text/javascript",
                 "exec": [
                   "var jsonData = JSON.parse(responseBody);",
                   "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
                   "}",
                   ""
                 ]
@@ -22,7 +22,7 @@
             {
               "listen": "prerequest",
               "script": {
-                "id": "089d93c5-bab2-4352-82d6-525107a34d0b",
+                "id": "{{uuid2}}",
                 "type": "text/javascript",
                 "exec": [
                   "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());",
@@ -44,18 +44,41 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"login_code_type\":\"0\",\n  \"login_code\":\"{{login_code}}\",\n  \"user_uuid\":\"{{user_uuid}}\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "item_image",
+                  "description": "",
+                  "type": "file"
+                },
+                {
+                  "key": "title",
+                  "value": "Item {{count_int}}",
+                  "description": "",
+                  "type": "text"
+                },
+                {
+                  "key": "attached_file",
+                  "description": "",
+                  "type": "file"
+                },
+                {
+                  "key": "external_url",
+                  "value": "http://example.com/a",
+                  "description": "",
+                  "type": "text"
+                }
+              ]
             },
             "url": {
-              "raw": "{{host}}/api/users/user-login-code/",
+              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "api",
-                "users",
-                "user-login-code",
+                "{{app_name}}",
+                "{{model_name_hyphen_seperated}}",
                 ""
               ]
             }
@@ -63,17 +86,17 @@
           "response": []
         },
         {
-          "name": "user login listing get",
+          "name": "{{model_name_space_seperated_lower_case}} listing get",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "2789933e-83dd-44f5-ac91-1c912996e019",
+                "id": "{{uuid3}}",
                 "type": "text/javascript",
                 "exec": [
                   "var jsonData = JSON.parse(responseBody);",
                   "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results[0].uuid);",
+                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results[0].uuid);",
                   "}",
                   ""
                 ]
@@ -82,7 +105,7 @@
             {
               "listen": "prerequest",
               "script": {
-                "id": "5d8d3259-7b83-4d93-ab13-c1f9f057db84",
+                "id": "{{uuid4}}",
                 "type": "text/javascript",
                 "exec": [
                   "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());"
@@ -107,14 +130,14 @@
               "raw": ""
             },
             "url": {
-              "raw": "{{host}}/api/users/user-login-code/",
+              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "api",
-                "users",
-                "user-login-code",
+                "{{app_name}}",
+                "{{model_name_hyphen_seperated}}",
                 ""
               ]
             }
@@ -122,17 +145,17 @@
           "response": []
         },
         {
-          "name": "user login single update",
+          "name": "{{model_name_space_seperated_lower_case}} single update",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "b941336f-2ff1-45fc-a5df-149777bf5719",
+                "id": "{{uuid5}}",
                 "type": "text/javascript",
                 "exec": [
                   "var jsonData = JSON.parse(responseBody);",
                   "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
                   "}",
                   ""
                 ]
@@ -152,19 +175,44 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"login_code_type\":\"0\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "item_image",
+                  "value": "",
+                  "description": "",
+                  "type": "file"
+                },
+                {
+                  "key": "title",
+                  "value": "Item {{count_int}}",
+                  "description": "",
+                  "type": "text"
+                },
+                {
+                  "key": "attached_file",
+                  "value": "",
+                  "description": "",
+                  "type": "file"
+                },
+                {
+                  "key": "external_url",
+                  "value": "http://example.com/b",
+                  "description": "",
+                  "type": "text"
+                }
+              ]
             },
             "url": {
-              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "api",
-                "users",
-                "user-login-code",
-                "{{user_login_code_uuid}}",
+                "{{app_name}}",
+                "{{model_name_hyphen_seperated}}",
+                "{{{{model_file_name}}_uuid}}",
                 ""
               ]
             }
@@ -172,17 +220,17 @@
           "response": []
         },
         {
-          "name": "user login single get",
+          "name": "{{model_name_space_seperated_lower_case}} single get",
           "event": [
             {
               "listen": "test",
               "script": {
-                "id": "164a2a55-9b6f-4d7e-a1e9-c0a6801b8853",
+                "id": "{{uuid6}}",
                 "type": "text/javascript",
                 "exec": [
                   "var jsonData = JSON.parse(responseBody);",
                   "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"user_login_code_uuid\", jsonData.results.uuid);",
+                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
                   "}",
                   ""
                 ]
@@ -206,15 +254,15 @@
               "raw": ""
             },
             "url": {
-              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "api",
-                "users",
-                "user-login-code",
-                "{{user_login_code_uuid}}",
+                "{{app_name}}",
+                "{{model_name_hyphen_seperated}}",
+                "{{{{model_file_name}}_uuid}}",
                 ""
               ]
             }
@@ -222,7 +270,7 @@
           "response": []
         },
         {
-          "name": "user login single delete",
+          "name": "{{model_name_space_seperated_lower_case}} single delete",
           "request": {
             "method": "DELETE",
             "header": [
@@ -236,15 +284,15 @@
               "raw": ""
             },
             "url": {
-              "raw": "{{host}}/api/users/user-login-code/{{user_login_code_uuid}}/",
+              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "api",
-                "users",
-                "user-login-code",
-                "{{user_login_code_uuid}}",
+                "{{app_name}}",
+                "{{model_name_hyphen_seperated}}",
+                "{{{{model_file_name}}_uuid}}",
                 ""
               ]
             }
@@ -256,7 +304,7 @@
         {
           "listen": "prerequest",
           "script": {
-            "id": "e9f3ebde-0f22-45da-91f1-2fab4e74ebd5",
+            "id": "{{uuid7}}",
             "type": "text/javascript",
             "exec": [
               ""
@@ -266,7 +314,7 @@
         {
           "listen": "test",
           "script": {
-            "id": "f9163e91-c3b7-436e-a5a6-d5fb9c8aeab4",
+            "id": "{{uuid8}}",
             "type": "text/javascript",
             "exec": [
               ""
