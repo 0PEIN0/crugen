@@ -909,7 +909,33 @@ class DjangoCrudGenerator(object):
 
     def _update_postman_collection(self,
                                    single_model_def):
-        # TODO: complete postman collection generation
+        context = {}
+        all_items = ''
+        cn = 0
+        for key, value in single_model_def['def'].items():
+            if value['__type__'] == 'ManyToManyField':
+                key = key + '_uuids'
+            elif value['__type__'] == 'ForeignKey':
+                key = key + '_uuid'
+            if value['__type__'] == 'ImageField' or value['__type__'] == 'FileField':
+                context = {
+                    'key': key,
+                    'value': '',
+                    'type': 'file',
+                }
+            else:
+                dict_val = '{{{{count_int}}}}'.format(key=key)
+                context = {
+                    'key': key,
+                    'value': dict_val,
+                    'type': 'text',
+                }
+            single_item = self._process_template_file(template_file_name='postman_collection_single_item.j2',
+                                                      context=context)
+            if cn > 0:
+                all_items += ','
+            all_items += single_item
+            cn += 1
         context = {
             'model_file_name': single_model_def['model_file_name'],
             'model_name_hyphen_seperated': single_model_def['model_name_hyphen_seperated'],
@@ -923,10 +949,14 @@ class DjangoCrudGenerator(object):
             'uuid6': str(uuid.uuid4()),
             'uuid7': str(uuid.uuid4()),
             'uuid8': str(uuid.uuid4()),
+            'all_items': all_items
         }
         file_content = self._process_template_file(template_file_name='postman_collection_template.j2',
                                                    context=context)
-        print(77, file_content)
+        replace_str = file_content + '	],\n"event": ['
+        file_content = re.sub(
+            r'(	\],\n"event": \[)', r'\t{replace_str}'.format(replace_str=replace_str), file_content)
+        print(66, file_content)
 
     def _prepare_angular_service_class_file_content(self,
                                                     single_model_def):
