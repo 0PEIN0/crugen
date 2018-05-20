@@ -909,6 +909,7 @@ class DjangoCrudGenerator(object):
 
     def _update_postman_collection(self,
                                    single_model_def):
+        # TODO: complete postman export
         context = {}
         all_items = ''
         cn = 0
