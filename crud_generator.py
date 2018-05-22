@@ -179,6 +179,7 @@ class DjangoCrudGenerator(object):
             'model_field_constant_file_path': '{prefix}/{app_name}/constants/',
             'app_utils_file': '{prefix}/{app_name}/utils.py',
             'project_initial_data_load_path': '{repo_root_path}/scripts/python/initial_data_load.py',
+            'postman_collection_file_path': '{repo_root_path}/scripts/postman/{postman_collection_name}.postman_collection.json',
         }
         for key, value in custom_file_configs.items():
             model_def[key] = value.format(
@@ -186,7 +187,8 @@ class DjangoCrudGenerator(object):
                 prefix=self.PROJECT_PATH,
                 app_name=model_def['app_name'],
                 project_name=model_def['project_name'],
-                file_name=model_def['model_file_name'])
+                file_name=model_def['model_file_name'],
+                postman_collection_name=self.CONFIG['POSTMAN_COLLECTION_NAME'])
         name_word_list = self._camel_case_word_split(
             source_string=model_def['model_name'])
         model_def['model_name_spaces'] = ' '.join(name_word_list)
@@ -906,6 +908,7 @@ class DjangoCrudGenerator(object):
                 r'(\]\)  \# update permission end)', r'\t{replace_str}'.format(replace_str=replace_str), file_content)
             self._write_on_file_force(dir_path=single_model_def['project_initial_data_load_path'],
                                       file_content=file_content)
+        print('INFO: updated initial data load script group permission values.')
 
     def _update_postman_collection(self,
                                    single_model_def):
@@ -934,7 +937,8 @@ class DjangoCrudGenerator(object):
             single_item = self._process_template_file(template_file_name='postman_collection_single_item.j2',
                                                       context=context)
             if cn > 0:
-                all_items += ','
+                all_items = all_items[:-1]
+                all_items += ',\n'
             all_items += single_item
             cn += 1
         context = {
@@ -952,12 +956,16 @@ class DjangoCrudGenerator(object):
             'uuid8': str(uuid.uuid4()),
             'all_items': all_items
         }
-        file_content = self._process_template_file(template_file_name='postman_collection_template.j2',
-                                                   context=context)
-        replace_str = file_content + '	],\n"event": ['
-        file_content = re.sub(
-            r'(	\],\n"event": \[)', r'\t{replace_str}'.format(replace_str=replace_str), file_content)
-        print(66, file_content)
+        replace_str = self._process_template_file(template_file_name='postman_collection_template.j2',
+                                                  context=context)
+        old_content = self._read_file(
+            dir_path=single_model_def['postman_collection_file_path'])
+        replace_str = replace_str + '	],\n"event": ['
+        new_content = re.sub(
+            r'(	\],\n"event": \[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
+        self._write_on_file_force(dir_path=single_model_def['postman_collection_file_path'],
+                                  file_content=new_content)
+        print('INFO: updated postman collection.')
 
     def _prepare_angular_service_class_file_content(self,
                                                     single_model_def):
@@ -1039,8 +1047,12 @@ class DjangoCrudGenerator(object):
 
     def execute_list(self,
                      model_def_list):
+        cn = 0
         for model_def in model_def_list:
+            print(
+                'INFO: executing {0} index of model definitions...'.format(cn))
             self.execute(model_def=model_def)
+            cn += 1
         print('INFO: all operation completed.')
 
 
