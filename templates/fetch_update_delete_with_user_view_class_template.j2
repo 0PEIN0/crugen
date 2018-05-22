@@ -3,6 +3,7 @@ import sys
 
 from rest.views import BaseRetrieveUpdateDestroyAPIView
 from users.constants import *
+from users.models import User
 from {{app_name}}.rest_api.serializers import ({{model_serializer_name}}Serializer,
                                                {{model_name}}OutputSerializer)
 from {{app_name}}.services import {{model_name}}Service
