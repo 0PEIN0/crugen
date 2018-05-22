@@ -20,7 +20,7 @@ class {{model_name}}(BaseModel):
 
 {{model_body}}
     def __str__(self):
-        return self.{{str_property_name}}
+        return str(self.{{str_property_name}})
 
     objects = {{model_name}}Manager()
 
