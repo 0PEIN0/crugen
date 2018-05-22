@@ -180,6 +180,7 @@ class DjangoCrudGenerator(object):
             'app_utils_file': '{prefix}/{app_name}/utils.py',
             'project_initial_data_load_path': '{repo_root_path}/scripts/python/initial_data_load.py',
             'postman_collection_file_path': '{repo_root_path}/scripts/postman/{postman_collection_name}.postman_collection.json',
+            'postman_collection_temp_file_path': '{repo_root_path}/scripts/postman/temp.postman_collection.json',
         }
         for key, value in custom_file_configs.items():
             model_def[key] = value.format(
@@ -912,7 +913,7 @@ class DjangoCrudGenerator(object):
 
     def _update_postman_collection(self,
                                    single_model_def):
-        # TODO: complete postman export
+        # TODO: complete postman collection writing regex pattern matching
         context = {}
         all_items = ''
         cn = 0
@@ -960,11 +961,13 @@ class DjangoCrudGenerator(object):
                                                   context=context)
         old_content = self._read_file(
             dir_path=single_model_def['postman_collection_file_path'])
-        replace_str = replace_str + '	],\n"event": ['
-        new_content = re.sub(
-            r'(	\],\n"event": \[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
-        self._write_on_file_force(dir_path=single_model_def['postman_collection_file_path'],
-                                  file_content=new_content)
+        replace_str = replace_str + '],\n"event": ['
+        self._write_on_file_force(dir_path=single_model_def['postman_collection_temp_file_path'],
+                                  file_content=replace_str)
+        # new_content = re.sub(
+        #     r'(\],\n\t"event":\s\[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
+        # self._write_on_file_force(dir_path=single_model_def['postman_collection_file_path'],
+        #                           file_content=new_content)
         print('INFO: updated postman collection.')
 
     def _prepare_angular_service_class_file_content(self,

@@ -1,281 +1,282 @@
+,
+{
+  "name": "{{model_name_space_seperated_lower_case}}",
+  "description": null,
+  "item": [
     {
-      "name": "{{model_name_space_seperated_lower_case}}",
-      "description": null,
-      "item": [
-        {
-          "name": "{{model_name_space_seperated_lower_case}} create single",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "{{uuid1}}",
-                "type": "text/javascript",
-                "exec": [
-                  "var jsonData = JSON.parse(responseBody);",
-                  "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
-                  "}",
-                  ""
-                ]
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "id": "{{uuid2}}",
-                "type": "text/javascript",
-                "exec": [
-                  "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());",
-                  ""
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{auth_token}}"
-              }
-            ],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {{all_items}}
-              ]
-            },
-            "url": {
-              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "api",
-                "{{app_name}}",
-                "{{model_name_hyphen_seperated}}",
-                ""
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "{{model_name_space_seperated_lower_case}} listing get",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "{{uuid3}}",
-                "type": "text/javascript",
-                "exec": [
-                  "var jsonData = JSON.parse(responseBody);",
-                  "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results[0].uuid);",
-                  "}",
-                  ""
-                ]
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "id": "{{uuid4}}",
-                "type": "text/javascript",
-                "exec": [
-                  "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{auth_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "api",
-                "{{app_name}}",
-                "{{model_name_hyphen_seperated}}",
-                ""
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "{{model_name_space_seperated_lower_case}} single update",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "{{uuid5}}",
-                "type": "text/javascript",
-                "exec": [
-                  "var jsonData = JSON.parse(responseBody);",
-                  "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
-                  "}",
-                  ""
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{auth_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-{{all_items}}
-              ]
-            },
-            "url": {
-              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "api",
-                "{{app_name}}",
-                "{{model_name_hyphen_seperated}}",
-                "{{{{model_file_name}}_uuid}}",
-                ""
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "{{model_name_space_seperated_lower_case}} single get",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "{{uuid6}}",
-                "type": "text/javascript",
-                "exec": [
-                  "var jsonData = JSON.parse(responseBody);",
-                  "if(jsonData.results!= null){",
-                  "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
-                  "}",
-                  ""
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{auth_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "api",
-                "{{app_name}}",
-                "{{model_name_hyphen_seperated}}",
-                "{{{{model_file_name}}_uuid}}",
-                ""
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "{{model_name_space_seperated_lower_case}} single delete",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "{{auth_token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "api",
-                "{{app_name}}",
-                "{{model_name_hyphen_seperated}}",
-                "{{{{model_file_name}}_uuid}}",
-                ""
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
+      "name": "{{model_name_space_seperated_lower_case}} create single",
       "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "{{uuid7}}",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
         {
           "listen": "test",
           "script": {
-            "id": "{{uuid8}}",
+            "id": "{{uuid1}}",
             "type": "text/javascript",
             "exec": [
+              "var jsonData = JSON.parse(responseBody);",
+              "if(jsonData.results!= null){",
+              "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
+              "}",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "{{uuid2}}",
+            "type": "text/javascript",
+            "exec": [
+              "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());",
               ""
             ]
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {{all_items}}
+          ]
+        },
+        "url": {
+          "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "{{app_name}}",
+            "{{model_name_hyphen_seperated}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{model_name_space_seperated_lower_case}} listing get",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "{{uuid3}}",
+            "type": "text/javascript",
+            "exec": [
+              "var jsonData = JSON.parse(responseBody);",
+              "if(jsonData.results!= null){",
+              "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results[0].uuid);",
+              "}",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "{{uuid4}}",
+            "type": "text/javascript",
+            "exec": [
+              "postman.setEnvironmentVariable(\"count_int\", (new Date()).getTime());"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "{{app_name}}",
+            "{{model_name_hyphen_seperated}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{model_name_space_seperated_lower_case}} single update",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "{{uuid5}}",
+            "type": "text/javascript",
+            "exec": [
+              "var jsonData = JSON.parse(responseBody);",
+              "if(jsonData.results!= null){",
+              "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
+              "}",
+              ""
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+{{all_items}}
+          ]
+        },
+        "url": {
+          "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "{{app_name}}",
+            "{{model_name_hyphen_seperated}}",
+            "{{{{model_file_name}}_uuid}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{model_name_space_seperated_lower_case}} single get",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "{{uuid6}}",
+            "type": "text/javascript",
+            "exec": [
+              "var jsonData = JSON.parse(responseBody);",
+              "if(jsonData.results!= null){",
+              "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results.uuid);",
+              "}",
+              ""
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "{{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "{{app_name}}",
+            "{{model_name_hyphen_seperated}}",
+            "{{{{model_file_name}}_uuid}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{model_name_space_seperated_lower_case}} single delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{host}}/api/{{app_name}}/{{model_name_hyphen_seperated}}/{{{{model_file_name}}_uuid}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "api",
+            "{{app_name}}",
+            "{{model_name_hyphen_seperated}}",
+            "{{{{model_file_name}}_uuid}}",
+            ""
+          ]
+        }
+      },
+      "response": []
     }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "{{uuid7}}",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "{{uuid8}}",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
