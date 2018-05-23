@@ -18,6 +18,4 @@ class {{model_name}}Service(BaseService):
     def check_user_{{model_file_name}}(self,
                                      {{model_file_name}}_uuid):
         {{model_file_name}} = {{model_name}}.objects.get_by_uuid(uuid={{model_file_name}}_uuid)
-        if {{model_file_name}}.user.id != self.user.id:
-            raise ObjectDoesNotExist(message_code='sr_{{model_file_name}}_1')
         return {{model_file_name}}
