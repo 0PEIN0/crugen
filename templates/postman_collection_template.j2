@@ -75,7 +75,7 @@
             "type": "text/javascript",
             "exec": [
               "var jsonData = JSON.parse(responseBody);",
-              "if(jsonData.results!= null){",
+              "if(jsonData.results!= null&&jsonData.results.length>0){",
               "    postman.setEnvironmentVariable(\"{{model_file_name}}_uuid\", jsonData.results[0].uuid);",
               "}",
               ""
