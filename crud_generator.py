@@ -117,7 +117,7 @@ class DjangoCrudGenerator(object):
             'app_name': single_model_def['app_name'],
             'app_name_camel_case': app_name_camel_case,
         }
-        self._write_template_file(template_file_name='django_apps_file_template.j2',
+        self._write_template_file(template_file_name='django-app/{0}/django_apps_file_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path=file_path)
 
@@ -348,14 +348,14 @@ class DjangoCrudGenerator(object):
                 'choice_name_upper': item_upper,
                 'choice_value': str(cn),
             }
-            file_content = self._process_template_file(template_file_name='constant_class_single_static_field_template.j2',
+            file_content = self._process_template_file(template_file_name='constants/{0}/constant_class_single_static_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context)
             choice_static_field_list += file_content
             context = {
                 'choice_name_upper': item_upper,
                 'choice_name_spaces': item,
             }
-            file_content = self._process_template_file(template_file_name='constant_class_single_choice_field_template.j2',
+            file_content = self._process_template_file(template_file_name='constants/{0}/constant_class_single_choice_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context)
             choice_list += file_content
             cn += 1
@@ -364,7 +364,7 @@ class DjangoCrudGenerator(object):
             'choice_static_field_list': choice_static_field_list,
             'choice_list': choice_list,
         }
-        self._write_template_file(template_file_name='constant_class_template.j2',
+        self._write_template_file(template_file_name='constants/{0}/constant_class_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path='{prefix}{model_field_name}.py'.format(prefix=single_model_def['model_field_constant_file_path'], model_field_name=field_name))
         context = {
@@ -373,7 +373,7 @@ class DjangoCrudGenerator(object):
             'model_name': self._convert_from_snake_to_camel(source_string=field_name),
             'class_name_suffix_part': '',
         }
-        file_content = self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        file_content = self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                                   context=context,
                                                                   destination_file_path=single_model_def['constants_init_file_path'])
         single_model_def['model_additional_imports'] += '\n' + file_content.replace(
@@ -430,7 +430,7 @@ class DjangoCrudGenerator(object):
                     'value': property_value,
                 })
             for context in context_list:
-                file_content = self._process_template_file_only_first_line(template_file_name='model_property_template.j2',
+                file_content = self._process_template_file_only_first_line(template_file_name='models/{0}/model_property_template.j2'.format(self.TEMPLATE_VERSION),
                                                                            context=context)
                 other_properties.append(file_content)
             if len(other_properties) > 0:
@@ -444,7 +444,7 @@ class DjangoCrudGenerator(object):
                 'help_text': value['__help_text__'],
                 'other_properties': other_properties,
             }
-            file_content = self._process_template_file(template_file_name='model_field_template.j2',
+            file_content = self._process_template_file(template_file_name='models/{0}/model_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context)
             model_body = model_body + file_content
         return model_body
@@ -463,7 +463,7 @@ class DjangoCrudGenerator(object):
             'str_property_name': single_model_def['str_property_name'],
             'additional_imports': single_model_def['model_additional_imports'],
         }
-        self._write_template_file(template_file_name='model_template.j2',
+        self._write_template_file(template_file_name='models/{0}/model_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path=single_model_def['model_file_path'])
         context = {
@@ -472,7 +472,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': '',
         }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['model_init_file_path'])
         print('INFO: checked/updated model class for the model.')
@@ -496,7 +496,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': 'Service',
         }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['service_init_file_path'])
         print('INFO: checked/updated service class for the model.')
@@ -519,12 +519,12 @@ class DjangoCrudGenerator(object):
                     'model_name_spaces': single_model_def['model_name_spaces'],
                     'plural_identifier': plural_identifier,
                 }
-                custom_fields = custom_fields + self._process_template_file(template_file_name='serializer_payload_custom_field_template.j2',
+                custom_fields = custom_fields + self._process_template_file(template_file_name='serializers/{0}/serializer_payload_custom_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                             context=context)
             context = {
                 'field_name': key,
             }
-            file_content = self._process_template_file_only_first_line(template_file_name='serializer_field_template.j2',
+            file_content = self._process_template_file_only_first_line(template_file_name='serializers/{0}/serializer_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                        context=context)
             if cn > 0:
                 file_content = '\n' + file_content
@@ -539,7 +539,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'custom_fields': custom_fields,
             }
-            self._write_template_file(template_file_name='create_update_serializer_class_template.j2',
+            self._write_template_file(template_file_name='serializers/{0}/create_update_serializer_class_template.j2'.format(self.TEMPLATE_VERSION),
                                       context=context,
                                       destination_file_path=single_model_def['create_update_serializer_file_path'])
             context = {
@@ -548,7 +548,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'class_name_suffix_part': 'CreateUpdateSerializer',
             }
-            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+            self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context,
                                                        destination_file_path=single_model_def['serializer_init_file_path'])
         else:
@@ -557,7 +557,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'custom_fields': custom_fields,
             }
-            self._write_template_file(template_file_name='create_serializer_class_template.j2',
+            self._write_template_file(template_file_name='serializers/{0}/create_serializer_class_template.j2',
                                       context=context,
                                       destination_file_path=single_model_def['create_serializer_file_path'])
             context = {
@@ -566,7 +566,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'class_name_suffix_part': 'CreateSerializer',
             }
-            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+            self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context,
                                                        destination_file_path=single_model_def['serializer_init_file_path'])
             context = {
@@ -574,7 +574,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'custom_fields': custom_fields,
             }
-            self._write_template_file(template_file_name='update_serializer_class_template.j2',
+            self._write_template_file(template_file_name='serializers/{0}/update_serializer_class_template.j2'.format(self.TEMPLATE_VERSION),
                                       context=context,
                                       destination_file_path=single_model_def['update_serializer_file_path'])
             context = {
@@ -583,7 +583,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'class_name_suffix_part': 'UpdateSerializer',
             }
-            self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+            self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context,
                                                        destination_file_path=single_model_def['serializer_init_file_path'])
         fields = []
@@ -596,7 +596,7 @@ class DjangoCrudGenerator(object):
                 context = {
                     'foreign_key_field': key,
                 }
-                field_declaration_list.append(self._process_template_file_only_first_line(template_file_name='output_serializer_class_field_template.j2',
+                field_declaration_list.append(self._process_template_file_only_first_line(template_file_name='serializers/{0}/output_serializer_class_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                                           context=context))
                 is_many = ''
                 if value['__type__'] == 'ManyToManyField':
@@ -606,12 +606,12 @@ class DjangoCrudGenerator(object):
                     'foreign_key_model': value['__ref_model__'].split('.')[1],
                     'is_many': is_many
                 }
-                field_method_declaration_list.append(self._process_template_file(template_file_name='output_serializer_class_field_method_template.j2',
+                field_method_declaration_list.append(self._process_template_file(template_file_name='serializers/{0}/output_serializer_class_field_method_template.j2'.format(self.TEMPLATE_VERSION),
                                                                                  context=context))
             context = {
                 'field_name': key,
             }
-            file_content = self._process_template_file_only_first_line(template_file_name='serializer_field_template.j2',
+            file_content = self._process_template_file_only_first_line(template_file_name='serializers/{0}/serializer_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                        context=context)
             if cn > 0:
                 file_content = '\n' + file_content
@@ -631,7 +631,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'additional_imports': '\n'.join(single_model_def['predefined_output_serializer_imports']),
         }
-        self._write_template_file(template_file_name='output_serializer_class_template.j2',
+        self._write_template_file(template_file_name='serializers/{0}/output_serializer_class_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path=single_model_def['output_serializer_file_path'])
         context = {
@@ -640,7 +640,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': 'OutputSerializer',
         }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['serializer_init_file_path'])
         print('INFO: checked/updated serializer classes for the model.')
@@ -700,7 +700,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': 'CreateListAPIView',
         }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['views_init_file_path'])
         template_file_name = 'fetch_update_delete_view_class_template.j2'
@@ -737,7 +737,7 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'class_name_suffix_part': 'RetrieveUpdateDestroyAPIView',
         }
-        self._check_and_write_export_template_file(template_file_name='export_file_class_name_template.j2',
+        self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['views_init_file_path'])
         print('INFO: checked/updated view classes for the model.')
@@ -753,7 +753,7 @@ class DjangoCrudGenerator(object):
                 context = {
                     'field_name': key,
                 }
-                file_content = self._process_template_file_only_first_line(template_file_name='admin_panel_class_field_template.j2',
+                file_content = self._process_template_file_only_first_line(template_file_name='admin/{0}/admin_panel_class_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                            context=context)
                 search_fields.append('\n ' + file_content)
                 cn += 1
@@ -767,7 +767,7 @@ class DjangoCrudGenerator(object):
             'search_fields': search_fields,
             'model_name': single_model_def['model_name'],
         }
-        self._write_template_file(template_file_name='admin_panel_class_template.j2',
+        self._write_template_file(template_file_name='admin/{0}/admin_panel_class_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path=single_model_def['admin_panel_class_file_path'])
         context = {
@@ -777,7 +777,7 @@ class DjangoCrudGenerator(object):
             'class_name_suffix_part': 'Admin',
             'app_name': single_model_def['app_name'],
         }
-        self._check_and_write_admin_export_template_file(template_file_name='export_admin_file_class_template.j2',
+        self._check_and_write_admin_export_template_file(template_file_name='admin/{0}/export_admin_file_class_template.j2'.format(self.TEMPLATE_VERSION),
                                                          context=context,
                                                          destination_file_path=single_model_def['admin_init_file_path'])
         print('INFO: checked/updated admin panel class for the model.')
@@ -811,7 +811,7 @@ class DjangoCrudGenerator(object):
             print('INFO: skipping new app urls.py file creation as that already exists.')
         else:
             context = {}
-            self._write_template_file(template_file_name='app_urls_template.j2',
+            self._write_template_file(template_file_name='urls/{0}/app_urls_template.j2'.format(self.TEMPLATE_VERSION),
                                       context=context,
                                       destination_file_path=single_model_def['app_urls_file_path'])
             print(
@@ -824,7 +824,7 @@ class DjangoCrudGenerator(object):
         context = {
             'app_name': single_model_def['app_name'],
         }
-        file_content = self._process_template_file(template_file_name='project_url_new_app_entry_template.j2',
+        file_content = self._process_template_file(template_file_name='urls/{0}/project_url_new_app_entry_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context)
         pattern_string = 'url(r\'^api/{app_name}/\','.format(
             app_name=single_model_def['app_name'])
@@ -850,12 +850,12 @@ class DjangoCrudGenerator(object):
         file_content = None
         pattern_string = None
         if single_model_def['with_user'] is True:
-            file_content = self._process_template_file(template_file_name='app_urls_new_entry_with_user_template.j2',
+            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_with_user_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context)
             pattern_string = 'url(r\'^user/(?P<user_uuid>[0-9a-f-]+)/{model_file_name}/$\','.format(
                 model_file_name=single_model_def['api_module_name'])
         else:
-            file_content = self._process_template_file(template_file_name='app_urls_new_entry_template.j2',
+            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_template.j2'.format(self.TEMPLATE_VERSION),
                                                        context=context)
             pattern_string = 'url(r\'^{model_file_name}/$\','.format(
                 model_file_name=single_model_def['api_module_name'])
@@ -877,7 +877,7 @@ class DjangoCrudGenerator(object):
             'model_file_name': single_model_def['model_file_name'],
             'model_name_spaces_lower_case': single_model_def['model_name_spaces_lower_case'],
         }
-        file_content = self._process_template_file(template_file_name='service_initial_error_message_template.j2',
+        file_content = self._process_template_file(template_file_name='services/{0}/service_initial_error_message_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context)
         pattern_string = '\'sr_{model_file_name}_1\': '.format(
             model_file_name=single_model_def['model_file_name'])
@@ -898,7 +898,7 @@ class DjangoCrudGenerator(object):
             'model_name_space_seperated': single_model_def['model_name_space_seperated'],
             'model_name_lowercase': single_model_def['model_name_lowercase'],
         }
-        replace_str = self._process_template_file(template_file_name='new_model_group_permission_entry_template.j2',
+        replace_str = self._process_template_file(template_file_name='data-load/{0}/new_model_group_permission_entry_template.j2'.format(self.TEMPLATE_VERSION),
                                                   context=context)
         file_content = self._read_file(
             dir_path=single_model_def['project_initial_data_load_path'])
@@ -935,7 +935,7 @@ class DjangoCrudGenerator(object):
                     'value': dict_val,
                     'type': 'text',
                 }
-            single_item = self._process_template_file(template_file_name='postman_collection_single_item.j2',
+            single_item = self._process_template_file(template_file_name='postman/{0}/postman_collection_single_item.j2'.format(self.TEMPLATE_VERSION),
                                                       context=context)
             if cn > 0:
                 all_items = all_items[:-1]
@@ -957,7 +957,7 @@ class DjangoCrudGenerator(object):
             'uuid8': str(uuid.uuid4()),
             'all_items': all_items
         }
-        replace_str = self._process_template_file(template_file_name='postman_collection_template.j2',
+        replace_str = self._process_template_file(template_file_name='postman/{0}/postman_collection_template.j2'.format(self.TEMPLATE_VERSION),
                                                   context=context)
         old_content = self._read_file(
             dir_path=single_model_def['postman_collection_file_path'])
@@ -980,7 +980,7 @@ class DjangoCrudGenerator(object):
             'api_module_name': single_model_def['api_module_name'],
             'field_list': field_list,
         }
-        file_content = self._process_template_file(template_file_name='angular_service_template.j2',
+        file_content = self._process_template_file(template_file_name='angular/{0}/angular_service_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context)
 
     def create_new_app(self,
