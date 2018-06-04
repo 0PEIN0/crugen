@@ -1,0 +1,130 @@
+#!/bin/bash
+
+{{project_name_upper_underscored}}_PYTHON_VERSION="{{python_version}}"
+{{project_name_upper_underscored}}_REPO_NAME="{{repo_name}}"
+{{project_name_upper_underscored}}_GIT_REPO="git@github.com:{{git_repo_owner_name}}/${{project_name_upper_underscored}}_REPO_NAME.git"
+{{project_name_upper_underscored}}_PROJECT_NAME="{{django_project_name}}"
+{{project_name_upper_underscored}}_CELERY_PROJECT_NAME="{{project_name_lower_underscored}}"
+{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE="{{project_name_lower_underscored}}"
+{{project_name_upper_underscored}}_PROJECT_NAME_HYPHEN_SEPARATED="{{project_name_lower_hyphen}}"
+{{project_name_upper_underscored}}_PROJECT_NAME_CAMEL_CASE="{{project_name_camel_case}}"
+{{project_name_upper_underscored}}_LOCAL_PORT="80{{port_number}}"
+{{project_name_upper_underscored}}_DJANGO_APP_NAMES="{{django_app_names}}" #space separated django app names
+{{project_name_upper_underscored}}_POSTGRES_USER="{{django_project_name}}"
+{{project_name_upper_underscored}}_CELERY_FLOWER_HOST="127.0.0.1"
+{{project_name_upper_underscored}}_CELERY_FLOWER_PORT="55{{port_number}}"
+
+{{project_name_upper_underscored}}_DJANGO_OPERATIONS="makemigrations migrate"
+{{project_name_upper_underscored}}_INIT_REQUIREMENTS_FILE_NAME='requirements.txt'
+{{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER="$SYSTEM_ROOT_GIT_REPO_FOLDER/${{project_name_upper_underscored}}_REPO_NAME/${{project_name_upper_underscored}}_PROJECT_NAME"
+{{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_NAME="${{{project_name_upper_underscored}}_PROJECT_NAME_CAMEL_CASE}Env"
+{{project_name_upper_underscored}}_INIT_DB_FILE_NAME="${{{project_name_upper_underscored}}_PROJECT_NAME_HYPHEN_SEPARATED}-reset-db.sql"
+{{project_name_upper_underscored}}_POSTGRES_USER_PASSWORD_RESET_FILE_NAME="${{{project_name_upper_underscored}}_PROJECT_NAME_HYPHEN_SEPARATED}-postgres-password-reset.sql"
+{{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_NAME="initial_data_load.py"
+{{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_FOLDER="$SYSTEM_ROOT_VIRTUAL_PYTHON_ENVIRONMENT_FOLDER/${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_NAME"
+{{project_name_upper_underscored}}_INIT_POSTGRES_DB_FILE_PATH="$SYSTEM_ROOT_GIT_REPO_FOLDER/${{project_name_upper_underscored}}_REPO_NAME/scripts/sql/${{{project_name_upper_underscored}}_INIT_DB_FILE_NAME}"
+{{project_name_upper_underscored}}_INIT_POSTGRES_DB_USER_PASSWORD_FILE_PATH="$SYSTEM_ROOT_GIT_REPO_FOLDER/${{project_name_upper_underscored}}_REPO_NAME/scripts/sql/${{{project_name_upper_underscored}}_POSTGRES_USER_PASSWORD_RESET_FILE_NAME}"
+{{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_PATH="$SYSTEM_ROOT_GIT_REPO_FOLDER/${{project_name_upper_underscored}}_REPO_NAME/scripts/python/${{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_NAME"
+
+if [ -f $BASH_HELPER_GIT_FOLDER/src/bash/django.sh ]; then
+    . $BASH_HELPER_GIT_FOLDER/src/bash/django.sh
+fi;
+
+{{project_name_camel_case}}DjangoDefaultSetup() {
+  if [ -z "$1" ]; then
+    echo 'null value not allowed as first parameter! You must pass the required parameter(s).'
+    return $1
+  fi;
+  if [ -z "$2" ]; then
+    echo 'null value not allowed as second parameter! You must pass the required parameter(s).'
+    return $2
+  fi;
+  if [ -z "$3" ]; then
+    echo 'null value not allowed as third parameter! You must pass the required parameter(s).'
+    return $3
+  fi;
+  cd $1/
+  eval ${3}_ve
+  eval "pip install -r $1/$2"
+  eval ${3}_init_data_load
+  eval ${3}_dir
+}
+
+{{project_name_camel_case}}DjangoRun() {
+  if [ -z "$1" ]; then
+    echo 'null value not allowed as first parameter! You must pass the required parameter(s).'
+    return $1
+  fi;
+  if [ -z "$2" ]; then
+    echo 'null value not allowed as second parameter! You must pass the required parameter(s).'
+    return $2
+  fi;
+  if [ -z "$3" ]; then
+    echo 'null value not allowed as third parameter! You must pass the required parameter(s).'
+    return $3
+  fi;
+  source ~/.zshrc
+  eval ${1}_ve
+  eval ${1}_stop_processes
+  eval ${1}_start_celery
+  ./manage.py runserver 0.0.0.0:${3}
+  echo "$2 Project Server Running!"
+}
+
+{{project_name_camel_case}}GitRebase() {
+  if [ -z "$1" ]; then
+    echo 'null value not allowed as first parameter! You must pass the required parameter(s).'
+    return $1
+  fi;
+  if [ -z "$2" ]; then
+    echo 'null value not allowed as second parameter! You must pass the required parameter(s).'
+    return $2
+  fi;
+  eval ${1}_ve
+  eval "git_r $2"
+  ./manage.py migrate
+  eval ${1}_init_data_load
+}
+
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_api_spec="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve && ./manage.py api_spec"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc="djangoBranchChange ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE "
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc_full_reset="djangoBranchChangeWithFullReset ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE "
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc_full_reset_and_run="djangoBranchChangeWithFullResetAndRun ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE "
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcd="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc develop"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcd_full_reset="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc_full_reset develop"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcd_full_reset_and_run="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bc_full_reset_and_run develop"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcd_run="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcd && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_bcr="djangoBranchChangeRun ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE "
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_db_shell="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve && ./manage.py shell"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_dir="goToDir \"${{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_frr="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_full_reset && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_full_reset="djangoFullReset ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_gf="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_dir && git_f"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_git_setup="djangoGitSetup ${{project_name_upper_underscored}}_GIT_REPO"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_git_r="{{project_name_camel_case}}GitRebase ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE "
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_git_rd="{{project_name_camel_case}}GitRebase ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE develop"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_init_data_load="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve && ./manage.py migrate && ./manage.py shell < ${{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_PATH"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_installs="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_init && cd \"$SYSTEM_ROOT_GIT_REPO_FOLDER\" && git clone ${{{project_name_upper_underscored}}_GIT_REPO} && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_installs && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_dir"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_last_10_commit_hash="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_dir && git log -10 --pretty=format:\"%h\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_loc="cloc \"${{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reinitiate="djangoReinitiate \"${{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER\" \"${{project_name_upper_underscored}}_DJANGO_APP_NAMES\" ${{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_PATH \"${{project_name_upper_underscored}}_DJANGO_OPERATIONS\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reinitiate_clean="djangoReinitiateClean \"${{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER\" \"${{project_name_upper_underscored}}_DJANGO_OPERATIONS\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reset_clean="djangoResetWithoutMigrationClean ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE ${{project_name_upper_underscored}}_INIT_DATA_LOAD_PYTHON_FILE_PATH"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_postgres_shell="psql -U ${{project_name_upper_underscored}}_POSTGRES_USER"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_postgres_user_password_reset="postgresPasswordReset \"${{project_name_upper_underscored}}_INIT_POSTGRES_DB_USER_PASSWORD_FILE_PATH\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_process_id="lsof -i:${{{project_name_upper_underscored}}_LOCAL_PORT} | awk '{print $2}'"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_psql_reset="djangoPsqlReset ${{project_name_upper_underscored}}_POSTGRES_USER \"${{project_name_upper_underscored}}_INIT_POSTGRES_DB_FILE_PATH\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reset="djangoReset ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_rr="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reset && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_rt="${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_reset && ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_test"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run="{{project_name_camel_case}}DjangoRun ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE ${{project_name_upper_underscored}}_LOCAL_PORT"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run_production="djangoProductionRun ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE ${{project_name_upper_underscored}}_PROJECT_NAME ${{project_name_upper_underscored}}_LOCAL_PORT"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_run_generic_deployment="djangoDeploymentOperations ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_start_celery="startCeleryWorkers ${{project_name_upper_underscored}}_CELERY_PROJECT_NAME ${{project_name_upper_underscored}}_CELERY_FLOWER_HOST ${{project_name_upper_underscored}}_CELERY_FLOWER_PORT"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_stop_processes="djangoStopProcesses ${{project_name_upper_underscored}}_LOCAL_PORT ${{project_name_upper_underscored}}_CELERY_PROJECT_NAME"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_test="djangoTest ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve="djangoUseVe \"${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_FOLDER\" ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_check="checkVirtualPythonEnvironmentFolder \"${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_FOLDER\" \"$SYSTEM_ROOT_VIRTUAL_PYTHON_ENVIRONMENT_FOLDER\" ${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_NAME"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_clear="djangoVeClear \"$SYSTEM_ROOT_VIRTUAL_PYTHON_ENVIRONMENT_FOLDER\" ${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_NAME"
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_init="pythonVeVersionDecider \"${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_FOLDER\" \"$SYSTEM_ROOT_VIRTUAL_PYTHON_ENVIRONMENT_FOLDER\" ${{project_name_upper_underscored}}_VIRTUAL_ENVIRONMENT_NAME ${{project_name_upper_underscored}}_PROJECT_NAME \"${{project_name_upper_underscored}}_PYTHON_VERSION\""
+alias ${{{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE}_ve_installs="{{project_name_camel_case}}DjangoDefaultSetup \"${{project_name_upper_underscored}}_PROJECT_ROOT_FOLDER\" ${{project_name_upper_underscored}}_INIT_REQUIREMENTS_FILE_NAME ${{project_name_upper_underscored}}_PROJECT_NAME_UNDERSCORE"
