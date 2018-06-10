@@ -761,7 +761,7 @@ class DjangoCrudGenerator(object):
                 context = {
                     'field_name': key,
                 }
-                file_content = self._process_template_file_only_first_line(template_file_name='admin/{0}/admin_panel_class_field_template.j2'.format(self.TEMPLATE_VERSION),
+                file_content = self._process_template_file_only_first_line(template_file_name='django-admin/{0}/admin_panel_class_field_template.j2'.format(self.TEMPLATE_VERSION),
                                                                            context=context)
                 search_fields.append('\n ' + file_content)
                 cn += 1
@@ -775,7 +775,7 @@ class DjangoCrudGenerator(object):
             'search_fields': search_fields,
             'model_name': single_model_def['model_name'],
         }
-        self._write_template_file(template_file_name='admin/{0}/admin_panel_class_template.j2'.format(self.TEMPLATE_VERSION),
+        self._write_template_file(template_file_name='django-admin/{0}/admin_panel_class_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
                                   destination_file_path=single_model_def['admin_panel_class_file_path'])
         context = {
@@ -785,7 +785,7 @@ class DjangoCrudGenerator(object):
             'class_name_suffix_part': 'Admin',
             'app_name': single_model_def['app_name'],
         }
-        self._check_and_write_admin_export_template_file(template_file_name='admin/{0}/export_admin_file_class_template.j2'.format(self.TEMPLATE_VERSION),
+        self._check_and_write_admin_export_template_file(template_file_name='django-admin/{0}/export_admin_file_class_template.j2'.format(self.TEMPLATE_VERSION),
                                                          context=context,
                                                          destination_file_path=single_model_def['admin_init_file_path'])
         print('INFO: checked/updated admin panel class for the model.')
