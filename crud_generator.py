@@ -40,6 +40,7 @@ class DjangoCrudGenerator(object):
         self.CONFIG['REPO_ROOT_PATH'] = self.CONFIG['REPO_ROOT_PATH'].format(
             user_name=self.CONFIG['SYSTEM_USER_NAME'])
         self.PROJECT_NAME = project_name
+        self.TEMPLATE_VERSION = self.CONFIG['TEMPLATE_VERSION']
         self.REPO_ROOT_PATH = self.CONFIG['REPO_ROOT_PATH']
         self.PROJECT_PATH = '{prefix}/{project_name}'.format(
             prefix=self.CONFIG['REPO_ROOT_PATH'],
@@ -484,7 +485,8 @@ class DjangoCrudGenerator(object):
             'model_name': single_model_def['model_name'],
             'model_file_name': single_model_def['model_file_name'],
         }
-        template_file_name = 'service_class_template_file.j2'
+        template_file_name = 'services/{0}/service_class_template_file.j2'.format(
+            self.TEMPLATE_VERSION)
         if single_model_def['with_user'] is True:
             template_file_name = 'service_class_with_user_template_file.j2'
         self._write_template_file(template_file_name=template_file_name,
@@ -557,7 +559,7 @@ class DjangoCrudGenerator(object):
                 'model_name': single_model_def['model_name'],
                 'custom_fields': custom_fields,
             }
-            self._write_template_file(template_file_name='serializers/{0}/create_serializer_class_template.j2',
+            self._write_template_file(template_file_name='serializers/{0}/create_serializer_class_template.j2'.format(self.TEMPLATE_VERSION),
                                       context=context,
                                       destination_file_path=single_model_def['create_serializer_file_path'])
             context = {
@@ -651,9 +653,11 @@ class DjangoCrudGenerator(object):
         for model_field, model_def in single_model_def['def'].items():
             template_file_name = ''
             if model_def['__type__'] == 'ForeignKey':
-                template_file_name = 'create_update_view_foreign_key_template.j2'
+                template_file_name = 'api-view/{0}/create_update_view_foreign_key_template.j2'.format(
+                    self.TEMPLATE_VERSION)
             elif model_def['__type__'] == 'ManyToManyField':
-                template_file_name = 'create_update_view_many_to_many_key_template.j2'
+                template_file_name = 'api-view/{0}/create_update_view_many_to_many_key_template.j2'.format(
+                    self.TEMPLATE_VERSION)
             else:
                 continue
             model_name = model_def['__ref_model__'].split('.')[1]
@@ -666,9 +670,11 @@ class DjangoCrudGenerator(object):
             file_content = self._process_template_file(template_file_name=template_file_name,
                                                        context=context)
             foreign_key_fields += '\n' + file_content[:-1]
-        template_file_name = 'create_list_view_class_template.j2'
+        template_file_name = 'api-view/{0}/create_list_view_class_template.j2'.format(
+            self.TEMPLATE_VERSION)
         if single_model_def['with_user'] is True:
-            template_file_name = 'create_list_with_user_view_class_template.j2'
+            template_file_name = 'api-view/{0}/create_list_with_user_view_class_template.j2'.format(
+                self.TEMPLATE_VERSION)
         if single_model_def['is_create_update_same_serializer'] is True:
             single_model_def['model_serializer_name'] = '{0}CreateUpdate'.format(
                 single_model_def['model_name'])
@@ -703,9 +709,11 @@ class DjangoCrudGenerator(object):
         self._check_and_write_export_template_file(template_file_name='export/{0}/export_file_class_name_template.j2'.format(self.TEMPLATE_VERSION),
                                                    context=context,
                                                    destination_file_path=single_model_def['views_init_file_path'])
-        template_file_name = 'fetch_update_delete_view_class_template.j2'
+        template_file_name = 'api-view/{0}/fetch_update_delete_view_class_template.j2'.format(
+            self.TEMPLATE_VERSION)
         if single_model_def['with_user'] is True:
-            template_file_name = 'fetch_update_delete_with_user_view_class_template.j2'
+            template_file_name = 'api-view/{0}/fetch_update_delete_with_user_view_class_template.j2'.format(
+                self.TEMPLATE_VERSION)
         if single_model_def['is_create_update_same_serializer'] is True:
             single_model_def['model_serializer_name'] = '{0}CreateUpdate'.format(
                 single_model_def['model_name'])
