@@ -25,6 +25,8 @@ class DjangoCrudGenerator(object):
         'EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS': ['ManyToManyField', 'ForeignKey', 'DateField', 'DateTimeField'],
         'READ_ONLY_FIELDS': ['_cn', '_count'],
         'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 3,
+        'SAMPLE_DATE': '20-01-2019',
+        'SAMPLE_DATE_TIME': '20-01-2019 10:03',
     }
 
     def __init__(self,
@@ -1018,6 +1020,10 @@ class DjangoCrudGenerator(object):
                     dict_val = '{{' + key + '}}'
                 elif value['__type__'] == 'ForeignKey':
                     dict_val = '{{' + key + '}}'
+                elif value['__type__'] == 'DateField':
+                    dict_val = self.CONFIG['SAMPLE_DATE']
+                elif value['__type__'] == 'DateTimeField':
+                    dict_val = self.CONFIG['SAMPLE_DATE_TIME']
                 context = {
                     'key': key,
                     'value': dict_val,
@@ -1054,7 +1060,7 @@ class DjangoCrudGenerator(object):
         #                           file_content=replace_str)
         new_content = re.sub(
             r'(\],\n\t"event":\s\[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
-        self._write_on_file_force(dir_path=single_model_def['postman_collection_temp_file_path'],
+        self._write_on_file_force(dir_path=single_model_def['postman_collection_file_path'],
                                   file_content=new_content)
         print('INFO: updated postman collection.')
 
@@ -1084,8 +1090,7 @@ class DjangoCrudGenerator(object):
                                 'migrations',
                                 'models',
                                 'rest_api',
-                                'services',
-                                'utils', ]:
+                                'services', ]:
             dir_path = '{prefix}/{sub_folder_name}'.format(prefix=parent_path,
                                                            sub_folder_name=sub_folder_name)
             self._perform_module_operations(dir_path=dir_path)
