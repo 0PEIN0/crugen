@@ -254,7 +254,6 @@ class DjangoCrudGenerator(object):
         for key, value in context.items():
             new_key = '{{' + key + '}}'
             while new_key in file_content:
-                print(7, new_key, value)
                 file_content = file_content.replace(new_key, value)
         return file_content
 
