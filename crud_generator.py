@@ -687,6 +687,22 @@ class DjangoCrudGenerator(object):
             import_txt = 'from {ref_model_path}.models import {ref_model_name}'.format(
                 ref_model_path=ref_model_path, ref_model_name=ref_model_name)
             single_model_def['additional_view_imports'].append(import_txt)
+        for model_field, model_def in single_model_def['def'].items():
+            template_file_name = ''
+            if model_def['__type__'] == 'DateField':
+                template_file_name = 'api-view/{0}/create_update_view_date_key_template.j2'.format(
+                    self.TEMPLATE_VERSION)
+            elif model_def['__type__'] == 'DateTimeField':
+                template_file_name = 'api-view/{0}/create_update_view_date_time_key_template.j2'.format(
+                    self.TEMPLATE_VERSION)
+            else:
+                continue
+            context = {
+                'date_time_field_name': model_field,
+            }
+            file_content = self._process_template_file(template_file_name=template_file_name,
+                                                       context=context)
+            foreign_key_fields += '\n' + file_content[:-1]
         template_file_name = 'api-view/{0}/create_list_view_class_template.j2'.format(
             self.TEMPLATE_VERSION)
         if single_model_def['with_user'] is True:
