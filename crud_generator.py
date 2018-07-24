@@ -23,7 +23,7 @@ class DjangoCrudGenerator(object):
             'file': 'FileField',
         },
         'EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS': ['ManyToManyField', 'ForeignKey', 'DateField', 'DateTimeField'],
-        'READ_ONLY_ADMIN_PANEL_FIELDS': ['_cn', '_count'],
+        'READ_ONLY_FIELDS': ['_cn', '_count'],
         'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 3,
     }
 
@@ -507,7 +507,7 @@ class DjangoCrudGenerator(object):
         cn = 0
         for key, value in single_model_def['def'].items():
             found = False
-            for pattern in self.CONFIG['READ_ONLY_ADMIN_PANEL_FIELDS']:
+            for pattern in self.CONFIG['READ_ONLY_FIELDS']:
                 if pattern in key:
                     found = True
                     break
@@ -799,7 +799,7 @@ class DjangoCrudGenerator(object):
         readonly_fields = []
         for key, value in single_model_def['def'].items():
             found = False
-            for pattern in self.CONFIG['READ_ONLY_ADMIN_PANEL_FIELDS']:
+            for pattern in self.CONFIG['READ_ONLY_FIELDS']:
                 if pattern in key:
                     found = True
                     break
@@ -942,31 +942,7 @@ class DjangoCrudGenerator(object):
     def _update_app_utils(self,
                           single_model_def):
         # TODO: complete the method implementation
-        urls_file_content = self._read_file(
-            dir_path=single_model_def['app_urls_file_path'])
-        context = {
-            'model_file_name': single_model_def['model_file_name'],
-            'model_name': single_model_def['model_name'],
-            'model_file_name_hyphen': single_model_def['api_module_name'],
-        }
-        file_content = None
-        pattern_string = None
-        if single_model_def['with_user'] is True:
-            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_with_user_template.j2'.format(self.TEMPLATE_VERSION),
-                                                       context=context)
-            pattern_string = 'url(r\'^user/(?P<user_uuid>[0-9a-f-]+)/{model_file_name}/$\','.format(
-                model_file_name=single_model_def['api_module_name'])
-        else:
-            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_template.j2'.format(self.TEMPLATE_VERSION),
-                                                       context=context)
-            pattern_string = 'url(r\'^{model_file_name}/$\','.format(
-                model_file_name=single_model_def['api_module_name'])
-        if pattern_string not in urls_file_content:
-            replace_str = file_content + ']'
-            urls_file_content = re.sub(
-                r'(\n\])', r'\t{replace_str}'.format(replace_str=replace_str), urls_file_content)
-            self._write_on_file_force(dir_path=single_model_def['app_urls_file_path'],
-                                      file_content=urls_file_content)
+        if True:
             print('INFO: added new utils folder in django app `urls.py` file.')
         else:
             print('INFO: utils folder already exists in django app `urls.py` file.')
@@ -1020,6 +996,13 @@ class DjangoCrudGenerator(object):
         all_items = ''
         cn = 0
         for key, value in single_model_def['def'].items():
+            found = False
+            for pattern in self.CONFIG['READ_ONLY_FIELDS']:
+                if pattern in key:
+                    found = True
+                    break
+            if found is True:
+                continue
             if value['__type__'] == 'ManyToManyField':
                 key = key + '_uuids'
             elif value['__type__'] == 'ForeignKey':
