@@ -1015,6 +1015,10 @@ class DjangoCrudGenerator(object):
                 }
             else:
                 dict_val = '{{{{count_int}}}}'.format(key=key)
+                if value['__type__'] == 'ManyToManyField':
+                    dict_val = '{{' + key + '}}'
+                elif value['__type__'] == 'ForeignKey':
+                    dict_val = '{{' + key + '}}'
                 context = {
                     'key': key,
                     'value': dict_val,
