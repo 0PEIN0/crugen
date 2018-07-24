@@ -24,7 +24,7 @@ class DjangoCrudGenerator(object):
         },
         'EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS': ['ManyToManyField', 'ForeignKey', 'DateField', 'DateTimeField'],
         'READ_ONLY_FIELDS': ['_cn', '_count'],
-        'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 3,
+        'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 5,
         'SAMPLE_DATE': '20-01-2019',
         'SAMPLE_DATE_TIME': '20-01-2019 10:03',
     }
