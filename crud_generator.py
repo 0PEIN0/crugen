@@ -1084,7 +1084,8 @@ class DjangoCrudGenerator(object):
                                 'migrations',
                                 'models',
                                 'rest_api',
-                                'services', ]:
+                                'services',
+                                'utils', ]:
             dir_path = '{prefix}/{sub_folder_name}'.format(prefix=parent_path,
                                                            sub_folder_name=sub_folder_name)
             self._perform_module_operations(dir_path=dir_path)
