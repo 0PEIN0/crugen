@@ -2,7 +2,7 @@ import logging
 import sys
 
 from rest.views import BaseRetrieveUpdateDestroyAPIView
-from commons.utils import GenericDateTimeOperations
+from commons.utils import *
 from users.constants import *
 from users.models import User
 from {{app_name}}.rest_api.serializers import ({{model_serializer_name}}Serializer,
@@ -38,7 +38,7 @@ class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIVie
                                     user=user)
         response, data = self.check_serializer(request=request)
         if response:
-            return response
+            return response{{foreign_key_fields}}
         {{model_name}}Service(user=user).check_{{model_file_name}}(
             {{model_file_name}}_uuid={{model_file_name}}_uuid)
         {{model_file_name}} = {{model_name}}Service(user=user).update(
