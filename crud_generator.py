@@ -991,7 +991,6 @@ class DjangoCrudGenerator(object):
 
     def _update_postman_collection(self,
                                    single_model_def):
-        # TODO: complete postman collection writing regex pattern matching
         context = {}
         all_items = ''
         cn = 0
@@ -1051,12 +1050,12 @@ class DjangoCrudGenerator(object):
         old_content = self._read_file(
             dir_path=single_model_def['postman_collection_file_path'])
         replace_str = replace_str + '],\n"event": ['
+        # self._write_on_file_force(dir_path=single_model_def['postman_collection_temp_file_path'],
+        #                           file_content=replace_str)
+        new_content = re.sub(
+            r'(\],\n\t"event":\s\[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
         self._write_on_file_force(dir_path=single_model_def['postman_collection_temp_file_path'],
-                                  file_content=replace_str)
-        # new_content = re.sub(
-        #     r'(\],\n\t"event":\s\[)', r'\t{replace_str}'.format(replace_str=replace_str), old_content)
-        # self._write_on_file_force(dir_path=single_model_def['postman_collection_file_path'],
-        #                           file_content=new_content)
+                                  file_content=new_content)
         print('INFO: updated postman collection.')
 
     def _prepare_angular_service_class_file_content(self,
