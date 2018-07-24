@@ -209,8 +209,6 @@ class DjangoCrudGenerator(object):
         else:
             model_def['foreign_key_to_user'] = '.filter(({0}{1})'.format(
                 model_def['foreign_key_to_user'], '=user')
-        if model_def.get('api_view_user_import', None) is None:
-            model_def['api_view_user_import'] = ''
         for item in ['gen_app',
                      'gen_model',
                      'gen_service',
@@ -695,7 +693,6 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
-            'api_view_user_import': single_model_def['api_view_user_import'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -734,7 +731,6 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
-            'api_view_user_import': single_model_def['api_view_user_import'],
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
