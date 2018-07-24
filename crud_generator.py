@@ -506,6 +506,11 @@ class DjangoCrudGenerator(object):
         fields = []
         cn = 0
         for key, value in single_model_def['def'].items():
+            found = False
+            for pattern in self.CONFIG['READ_ONLY_ADMIN_PANEL_FIELDS']:
+                if pattern in key:
+                    found = True
+                    break
             plural_identifier = ''
             if value['__type__'] == 'ManyToManyField':
                 key = key + '_uuids'
@@ -529,7 +534,8 @@ class DjangoCrudGenerator(object):
                 file_content = '\n' + file_content
             else:
                 file_content = file_content.strip()
-            fields.append(file_content)
+            if found == False:
+                fields.append(file_content)
             cn += 1
         fields = ''.join(fields)
         if single_model_def['is_create_update_same_serializer'] is True:
