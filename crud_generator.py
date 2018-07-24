@@ -178,7 +178,7 @@ class DjangoCrudGenerator(object):
             'project_urls_file_path': '{prefix}/{project_name}/urls.py',
             'project_messages_file_path': '{prefix}/rest/messages.py',
             'model_field_constant_file_path': '{prefix}/{app_name}/constants/',
-            'app_utils_file': '{prefix}/{app_name}/utils.py',
+            'app_utils_file': '{prefix}/{app_name}/utils/__init__.py',
             'project_initial_data_load_path': '{repo_root_path}/scripts/python/initial_data_load.py',
             'postman_collection_file_path': '{repo_root_path}/scripts/postman/{postman_collection_name}.postman_collection.json',
             'postman_collection_temp_file_path': '{repo_root_path}/scripts/postman/temp.postman_collection.json',
@@ -877,6 +877,38 @@ class DjangoCrudGenerator(object):
         else:
             print('INFO: model CRUD urls already exists in django app `urls.py` file.')
 
+    def _update_app_utils(self,
+                          single_model_def):
+        # TODO: complete the method implementation
+        urls_file_content = self._read_file(
+            dir_path=single_model_def['app_urls_file_path'])
+        context = {
+            'model_file_name': single_model_def['model_file_name'],
+            'model_name': single_model_def['model_name'],
+            'model_file_name_hyphen': single_model_def['api_module_name'],
+        }
+        file_content = None
+        pattern_string = None
+        if single_model_def['with_user'] is True:
+            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_with_user_template.j2'.format(self.TEMPLATE_VERSION),
+                                                       context=context)
+            pattern_string = 'url(r\'^user/(?P<user_uuid>[0-9a-f-]+)/{model_file_name}/$\','.format(
+                model_file_name=single_model_def['api_module_name'])
+        else:
+            file_content = self._process_template_file(template_file_name='urls/{0}/app_urls_new_entry_template.j2'.format(self.TEMPLATE_VERSION),
+                                                       context=context)
+            pattern_string = 'url(r\'^{model_file_name}/$\','.format(
+                model_file_name=single_model_def['api_module_name'])
+        if pattern_string not in urls_file_content:
+            replace_str = file_content + ']'
+            urls_file_content = re.sub(
+                r'(\n\])', r'\t{replace_str}'.format(replace_str=replace_str), urls_file_content)
+            self._write_on_file_force(dir_path=single_model_def['app_urls_file_path'],
+                                      file_content=urls_file_content)
+            print('INFO: added new utils folder in django app `urls.py` file.')
+        else:
+            print('INFO: utils folder already exists in django app `urls.py` file.')
+
     def _update_project_messages_file(self,
                                       single_model_def):
         messages_file_content = self._read_file(
@@ -1045,6 +1077,8 @@ class DjangoCrudGenerator(object):
             self._prepare_view_class_files_content(single_model_def=model_def)
         if model_def['gen_end_points'] is True:
             self._update_app_urls_file(single_model_def=model_def)
+        if model_def['gen_utils'] is True:
+            self._update_app_utils(single_model_def=model_def)
         if model_def['gen_group_permissions'] is True:
             self._update_initial_data_load_group_permission(
                 single_model_def=model_def)

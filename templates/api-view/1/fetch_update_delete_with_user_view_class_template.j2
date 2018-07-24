@@ -38,7 +38,7 @@ class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIVie
         response, data = self.check_serializer(request=request)
         if response:
             return response
-        {{model_name}}Service(user=user).check_user_{{model_file_name}}(
+        {{model_name}}Service(user=user).check_{{model_file_name}}(
             {{model_file_name}}_uuid={{model_file_name}}_uuid)
         {{model_file_name}} = {{model_name}}Service(user=user).delete_with_user(
             user_uuid=user_uuid,

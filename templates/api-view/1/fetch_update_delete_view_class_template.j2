@@ -36,7 +36,7 @@ class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIVie
         response, data = self.check_serializer(request=request)
         if response:
             return response
-        {{model_name}}Service(user=user).check_user_{{model_file_name}}(
+        {{model_name}}Service(user=user).check_{{model_file_name}}(
             {{model_file_name}}_uuid={{model_file_name}}_uuid)
         {{model_file_name}} = {{model_name}}Service(user=user).update(
             uuid_value={{model_file_name}}_uuid,
@@ -61,7 +61,7 @@ class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIVie
         user = request.user
         self.check_group_permission(method_name='single_{0}'.format(sys._getframe().f_code.co_name),
                                     user=user)
-        {{model_file_name}} = {{model_name}}Service(user=user).check_user_{{model_file_name}}(
+        {{model_file_name}} = {{model_name}}Service(user=user).check_{{model_file_name}}(
             {{model_file_name}}_uuid={{model_file_name}}_uuid)
         return self.ok(data={{model_file_name}},
                        serializer={{model_name}}OutputSerializer,
@@ -84,7 +84,7 @@ class {{model_name}}RetrieveUpdateDestroyAPIView(BaseRetrieveUpdateDestroyAPIVie
         user = request.user
         self.check_group_permission(method_name=sys._getframe().f_code.co_name,
                                     user=user)
-        {{model_name}}Service(user=user).check_user_{{model_file_name}}(
+        {{model_name}}Service(user=user).check_{{model_file_name}}(
             {{model_file_name}}_uuid={{model_file_name}}_uuid)
         {{model_file_name}} = {{model_name}}Service(user=user).delete_by_uuid(
             uuid_value={{model_file_name}}_uuid)
