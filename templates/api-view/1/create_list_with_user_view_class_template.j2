@@ -8,6 +8,8 @@ from {{app_name}}.rest_api.serializers import ({{model_serializer_name}}Serializ
                                                {{model_name}}OutputSerializer)
 from {{app_name}}.services import {{model_name}}Service
 from users.models import User
+{{additional_view_imports}}
+
 logger = logging.getLogger(__name__)
 
 

@@ -202,8 +202,6 @@ class DjangoCrudGenerator(object):
             model_def['with_user'] = False
         if model_def.get('predefined_model_imports', None) is None:
             model_def['predefined_model_imports'] = []
-        if model_def.get('predefined_output_serializer_imports', None) is None:
-            model_def['predefined_output_serializer_imports'] = []
         if model_def.get('foreign_key_to_user', None) is None:
             model_def['foreign_key_to_user'] = '.all()'
         else:
@@ -624,12 +622,25 @@ class DjangoCrudGenerator(object):
         field_declaration_list = '\n' + '\n'.join(field_declaration_list)
         field_method_declaration_list = '\n'.join(
             field_method_declaration_list)
+        predefined_output_serializer_imports = []
+        for key, value in single_model_def['def'].items():
+            if value['__type__'] in['ForeignKey', 'ManyToManyField', ]:
+                ref_model_name = value['__ref_model__'].split('.')[-1]
+                ref_model_path = value['__ref_model__'].split('.')[
+                    :-1]
+                ref_model_path = '.'.join(ref_model_path)
+                import_txt = 'from {ref_model_path}.models import {ref_model_name}'.format(
+                    ref_model_path=ref_model_path, ref_model_name=ref_model_name)
+                predefined_output_serializer_imports.append(import_txt)
+                import_txt = 'from {ref_model_path}.rest_api.serializers import {ref_model_name}OutputSerializer'.format(
+                    ref_model_path=ref_model_path, ref_model_name=ref_model_name)
+                predefined_output_serializer_imports.append(import_txt)
         context = {
             'fields': fields,
             'field_declaration_list': field_declaration_list,
             'field_method_declaration_list': field_method_declaration_list,
             'model_name': single_model_def['model_name'],
-            'additional_imports': '\n'.join(single_model_def['predefined_output_serializer_imports']),
+            'additional_imports': '\n'.join(predefined_output_serializer_imports),
         }
         self._write_template_file(template_file_name='serializers/{0}/output_serializer_class_template.j2'.format(self.TEMPLATE_VERSION),
                                   context=context,
@@ -648,6 +659,7 @@ class DjangoCrudGenerator(object):
     def _prepare_view_class_files_content(self,
                                           single_model_def):
         foreign_key_fields = ''
+        single_model_def['additional_view_imports'] = []
         for model_field, model_def in single_model_def['def'].items():
             template_file_name = ''
             if model_def['__type__'] == 'ForeignKey':
@@ -668,6 +680,13 @@ class DjangoCrudGenerator(object):
             file_content = self._process_template_file(template_file_name=template_file_name,
                                                        context=context)
             foreign_key_fields += '\n' + file_content[:-1]
+            ref_model_name = model_def['__ref_model__'].split('.')[-1]
+            ref_model_path = model_def['__ref_model__'].split('.')[
+                :-1]
+            ref_model_path = '.'.join(ref_model_path)
+            import_txt = 'from {ref_model_path}.models import {ref_model_name}'.format(
+                ref_model_path=ref_model_path, ref_model_name=ref_model_name)
+            single_model_def['additional_view_imports'].append(import_txt)
         template_file_name = 'api-view/{0}/create_list_view_class_template.j2'.format(
             self.TEMPLATE_VERSION)
         if single_model_def['with_user'] is True:
@@ -693,6 +712,7 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
+            'additional_view_imports': '\n'.join(single_model_def['additional_view_imports']),
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
@@ -731,6 +751,7 @@ class DjangoCrudGenerator(object):
             'put_method_allowed': single_model_def['put_method_allowed'],
             'delete_method_allowed': single_model_def['delete_method_allowed'],
             'foreign_key_to_user': single_model_def['foreign_key_to_user'],
+            'additional_view_imports': '\n'.join(single_model_def['additional_view_imports']),
         }
         self._write_template_file(template_file_name=template_file_name,
                                   context=context,
