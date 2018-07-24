@@ -23,6 +23,7 @@ class DjangoCrudGenerator(object):
             'file': 'FileField',
         },
         'EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS': ['ManyToManyField', 'ForeignKey', 'DateField', 'DateTimeField'],
+        'READ_ONLY_ADMIN_PANEL_FIELDS': ['_cn', '_count'],
         'ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT': 3,
     }
 
@@ -253,6 +254,7 @@ class DjangoCrudGenerator(object):
         for key, value in context.items():
             new_key = '{{' + key + '}}'
             while new_key in file_content:
+                print(7, new_key, value)
                 file_content = file_content.replace(new_key, value)
         return file_content
 
@@ -789,7 +791,20 @@ class DjangoCrudGenerator(object):
         cn = 0
         list_display = []
         search_fields = []
+        readonly_fields = []
         for key, value in single_model_def['def'].items():
+            found = False
+            for pattern in self.CONFIG['READ_ONLY_ADMIN_PANEL_FIELDS']:
+                if pattern in key:
+                    found = True
+                    break
+            if found is True:
+                context = {
+                    'field_name': key,
+                }
+                file_content = self._process_template_file_only_first_line(template_file_name='django-admin/{0}/admin_panel_class_field_template.j2'.format(self.TEMPLATE_VERSION),
+                                                                           context=context)
+                readonly_fields.append('\n   ' + file_content)
             if value['__type__'] not in self.CONFIG['EXCLUDED_ADMIN_PANEL_SEARCH_FIELDS']:
                 context = {
                     'field_name': key,
@@ -800,12 +815,21 @@ class DjangoCrudGenerator(object):
                 cn += 1
                 if cn <= self.CONFIG['ADMIN_PANEL_LIST_DISPLAY_FIELD_LIMIT']:
                     list_display.append('\n' + file_content)
+            elif value['__type__'] == 'ForeignKey':
+                for suffix in ['__uuid', '__id']:
+                    context = {
+                        'field_name': '{key}{suffix}'.format(key=key, suffix=suffix),
+                    }
+                    file_content = self._process_template_file_only_first_line(template_file_name='django-admin/{0}/admin_panel_class_field_template.j2'.format(self.TEMPLATE_VERSION),
+                                                                               context=context)
+                    search_fields.append('\n ' + file_content)
         list_display = ''.join(list_display)
         search_fields = ''.join(search_fields)
         context = {
             'app_name': single_model_def['app_name'],
             'list_display': list_display,
             'search_fields': search_fields,
+            'readonly_fields': ''.join(readonly_fields),
             'model_name': single_model_def['model_name'],
         }
         self._write_template_file(template_file_name='django-admin/{0}/admin_panel_class_template.j2'.format(self.TEMPLATE_VERSION),

@@ -16,7 +16,7 @@ class {{model_name}}Admin(admin.ModelAdmin):
                        'id',
                        'created_by',
                        'updated_by',
-                       'deleted_by',)
+                       'deleted_by',{{readonly_fields}})
 
     def save_model(self,
                    request,
