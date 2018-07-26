@@ -1106,7 +1106,6 @@ class DjangoCrudGenerator(object):
         self._update_project_settings_file(single_model_def=single_model_def)
         self._update_project_urls_file(single_model_def=single_model_def)
         self._update_project_messages_file(single_model_def=single_model_def)
-        # TODO: implement utils py file.
         print('INFO: checked for app existance and created if did not exist.')
 
     def execute(self,
